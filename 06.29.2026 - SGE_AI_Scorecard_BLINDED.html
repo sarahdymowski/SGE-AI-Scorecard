@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SGE 2026 AI Scorecard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; }
+  @media print { * { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+<div id="password-gate" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f5f5;font-family:system-ui,-apple-system,sans-serif;">
+  <div style="background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:2.5rem 2rem;width:320px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+    <div style="font-size:32px;margin-bottom:1rem;">🔒</div>
+    <h2 style="font-size:18px;font-weight:500;margin-bottom:0.5rem;color:#111;">SGE AI Scorecard</h2>
+    <p style="font-size:13px;color:#888;margin-bottom:1.5rem;">Enter the password to continue.</p>
+    <input id="pw-input" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')checkPW()" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;box-sizing:border-box;" />
+    <div id="pw-error" style="color:#c0392b;font-size:12px;margin-bottom:10px;display:none;">Incorrect password. Please try again.</div>
+    <button onclick="checkPW()" style="width:100%;padding:10px;background:#111;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;">Enter</button>
+  </div>
+</div>
+<div id="root" style="display:none;"></div>
+<script>
+function checkPW() {
+  var input = document.getElementById('pw-input').value;
+  if (input === 'SGE!') {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('root').style.display = 'block';
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+document.getElementById('pw-input').focus();
+</script>
+<script type="text/babel">
+const {useState, useMemo} = React;
+
+
+
+const L={"uc":["Coding","Content Gen","Customer Engagement","Data Analytics","DevOps/MLOps","Documentation","FP&A","HR & Recruiting","IT & Security","Legal & Contracts","Marketing Automation","Product & Design","QA & Testing","Sales Productivity"],"tof":["Content/Campaigns","Inbound Capture","Lead Gen","Lead Scoring","Personalization","Website Chatbots"],"mof":["AI Forecasting","Calendar/Scheduling","Call Transcription","Chatbots/Conversational","Demos","Outbound/Prospecting","Proposals & Contracts"],"ps":["Churn Prediction","Contract Mgmt","Customer Sentiment","Product Recs","Renewal Reminders","Support & Ticketing"],"pt":["Agents","Analytics & Insights","Content Generation","Copilot/Assistant","Document Intelligence","Personalization","Recommendations","Search & Query","Voice/Multimodal","Workflow Automation"],"pr":["No Extra Cost","Outcome-Based","Premium Tier","Seat-Based","Usage-Based"],"tal":["AI Design","AI Product Managers","AI/ML Engineers","Data Architects","Data Scientists","Data Viz","Exec AI Leader","Prompt Engineers"],"dinf":["Access Controls","Data Freshness","Data Quality","Data Unification","Semantic Enrichment"]};
+const _D=[{"co":"Company 1","bm":"Marketplace/Transactional","empAI":"0-25%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2],"ag":"In process of developing agents to accelerate product and engineering processes","tal":[4,0],"meas":"both","met":"We separate AI and non-AI development work (measured in story points)","sav":"6-10","hir":"reduced_1_10","gt":"We are experimenting with AI SDR. We also use AI to assist with meeting prep and content materials.","tof":[],"mof":[2,5,6],"gi":"Modest impact - mostly improvements in quality and speed of GTM content","ps":[],"cb":"No","cbV":"Zoom","cbD":"","csat":"","eAI":"Yes","dt":"Claude","dm":"Story points","di":"We've seen a doubling of velocity for the subset of early adopters","dinf":[],"da":"manual","api":"No, but its on our roadmap","rd":"0.1","lnch":"Yes","pt":[7,4,9],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":"No pricing safeguards in place"},{"co":"Company 2","bm":"Vertical SaaS","empAI":"51-75%","lClaude":0,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,3,2,4,10],"ag":"Analysis automation, code reviews, and customer service ticket mgmt","tal":[2],"meas":"quant","met":"Story points and code deploys, customer AI agent CSAT","sav":"0","hir":"no","gt":"Gemini, Kaia, and Outreach AI embeds","tof":[2,0],"mof":[2,5],"gi":"Unclear metrics at this juncture","ps":[2,5,0],"cb":"Yes","cbV":"Intercom","cbD":"0.15","csat":"20+ points","eAI":"Yes","dt":"Claude","dm":"Story Points","di":"10-15%","dinf":[3],"da":"manual","api":"No, but its on our roadmap","rd":"50","lnch":"Yes","pt":[9,6,2],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 3","bm":"Marketplace/Transactional","empAI":"51-75%","lClaude":1,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13,2,12,10,9],"ag":"We have been focused on Gumloop and Retool for the past 10-12 months. They are both low/no code AI process automation tools. We also have some custom UIs on top of foundation models for review verification and processing. We are now also rolling out Anthropic CoWork more broadly. Obviously using Claude Code in tech/dev.","tal":[2],"meas":"quant","met":"Internal tracking is currently narrow and focuses on content operations around reviews","sav":"6-10","hir":"reduced_1_10","gt":"We are primarily using Clay for data enrichment and then simple chat interfaces (ChatGPT) for content development. Some Claude Code for data analysis.","tof":[2,1],"mof":[2,6],"gi":"Modestly helpful in slowing revenue declines and avoiding need for additional hires.","ps":[5,3],"cb":"No","cbV":"Custom UI with OpenAI on backend","cbD":"Unclear","csat":"","eAI":"Yes","dt":"Claude Code","dm":"None currently, but working to change","di":"Hard to quantify since we have limited metrics. Working to change","dinf":[0,3],"da":"api","api":"Yes, limited / in progress","rd":"0.5","lnch":"Yes","pt":[3,7,9],"pr":[0],"cs":"Scale-up stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 4","bm":"Horizontal SaaS","empAI":"51-75%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"Y","uc":[0,1,5,11,13,2,12,4,10,8],"ag":"1. IT - Agent handles internal support tickets. 2. Product - Claude plugin with 15 skills to operate the product autonomously. 3. Dev - Claude code agentic system, every developer has their own claude code agentic team for QA/DEV/Unit testing and DevOps. 4. Sales - AI Agent for generating quotes according to playbooks and transcripts from meetings including insights and leading questions.","tal":[1],"meas":"qual","met":"Mainly through usage","sav":"0-5","hir":"reduced_11_25","gt":"Aurasell, ChatGPT, Claude co-work","tof":[0,5],"mof":[2,3,6,0],"gi":"Simplifying sales process with Aurasell, accurate forecasting, better decision making","ps":[2,4,5,0],"cb":"Yes","cbV":"DevRev with customization","cbD":"Still high percentage escalated to human","csat":"Did not measure the differentiation","eAI":"Yes","dt":"Claude code and cursor","dm":"PR rate by AI and generic Dev metrics","di":"Over 15% increase in R&D story points delivered per quarter.","dinf":[],"da":"api","api":"Yes, broadly deployed","rd":"0.6","lnch":"Yes","pt":[3,0,4,6,1,2],"pr":[0,4],"cs":"Early stage","rev":"6-15%","sg":"Monthly allowance"},{"co":"Company 5","bm":"Vertical SaaS","empAI":"76-100%","lClaude":0,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,10,9],"ag":"Developer agents: strings admin, CI/CD, storybook, regression analysis agent, build failed agent. Product agents: customer interviews agent, release note agent, product spec agent, idea board analysis agent. BI: BI agent (answers questions based on BI data).","tal":[],"meas":"qual","met":"Devs AI Usage, Devs velocity","sav":"?","hir":"unsure","gt":"Momentum.io, HubSpot, Gong, Apollo, salespeak.ai, OpenAI API via Zapier","tof":[2,0,5,4,3,1],"mof":[2,5,3,0],"gi":"The biggest impact has been in pipeline build and CRM data quality. Apollo and HubSpot workflows have improved TAM identification, enrichment, qualification, and outreach relevance, helping us create more actionable pipeline faster. Momentum has improved opportunity visibility by auto-populating SPICED and AE-to-AM handoff fields from call transcripts, increasing SPICED coverage in active opportunities from 30% to 87%.","ps":[0],"cb":"Yes","cbV":"Ada.cx","cbD":"30","csat":"Human Agent 96%, AI resolved 91%, AI unresolved 50%","eAI":"Yes","dt":"Claude Code, Cursor, Codex","dm":"Increased velocity","di":"20-40% productivity improvement, expected to grow significantly this year","dinf":[3],"da":"api","api":"Yes, broadly deployed","rd":"0.6","lnch":"Yes","pt":[3,0,4,9,2],"pr":[2,0,4],"cs":"Scale-up stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 6","bm":"Vertical SaaS","empAI":"26-50%","lClaude":0,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,2,12,9],"ag":"Dex: An AI agent connected to the knowledge base. AI for SDR: enriches account data.","tal":[1,7,6],"meas":"working","met":"Time saved, Quality","sav":"0","hir":"expect","gt":"AI for SDRs, call analysis, AI for PPC optimization, AI-generated landing pages","tof":[0],"mof":[2,5],"gi":"Too early to determine the impact.","ps":[2,5],"cb":"Yes","cbV":"","cbD":"AI assistance operates in support role only","csat":"NR","eAI":"Yes","dt":"Claude code","dm":"Time to develop","di":"Too early to quantify","dinf":[],"da":"manual","api":"No, but its on our roadmap","rd":"0.25","lnch":"Yes","pt":[3,0],"pr":[2,4],"cs":"Scale-up stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 7","bm":"Vertical SaaS","empAI":"51-75%","lClaude":1,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,9,6],"ag":"","tal":[2,1],"meas":"both","met":"Support Automation rate, number of PRs merged","sav":"6-10","hir":"reduced_1_10","gt":"Hubspot, Gong","tof":[0,5],"mof":[2],"gi":"","ps":[2,5,3],"cb":"Yes","cbV":"Intercom","cbD":"0.65","csat":"0.07","eAI":"Yes","dt":"Cursor, Claude, Github copilot","dm":"PRs merged","di":"+20%, but room for much more","dinf":[4,5,2,3,1],"da":"api","api":"Yes, limited / in progress","rd":"0.1","lnch":"Yes","pt":[3,0,8,2],"pr":[2],"cs":"Early stage","rev":"6-15%","sg":""},{"co":"Company 8","bm":"Marketplace/Transactional","empAI":"76-100%","lClaude":0,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,4,10,8,7,9,6],"ag":"Customer Support agent (deployed), Data Analysis Agent (deployed), Network Development agent (in development), New customer workflow agent (in development), Server Infrastructure (Datadog) agent (in development), Product Management Playbook agent (in development), Security Vulnerability Remediation agent (in development).","tal":[2,4],"meas":"both","met":"Development velocity, lower expenses, increase conversion rates","sav":"0-5","hir":"reduced_1_10","gt":"6sense, ChatGPT, Seismic, Gemini, Salesforce AgentForce, Claude.","tof":[2,0,5,4,3,1],"mof":[2,5,1],"gi":"GTV growth has gone from 0% to 13%. Large NDR improvement.","ps":[5],"cb":"Yes","cbV":"Salesforce AgentForce","cbD":"37","csat":"Human CSAT: 67%, AI: 85%","eAI":"Yes","dt":"Github Copilot, actively testing Claude Code","dm":"DX TrueThroughput, Cycle Time, Change Failure Rate","di":"Higher throughput among heavy AI adopters vs medium/low adopters.","dinf":[1,3,4],"da":"api","api":"No, and its not currently planned","rd":"0.2","lnch":"No","pt":[],"pr":[],"cs":"Early stage","rev":"Not sure","sg":""},{"co":"Company 9","bm":"Vertical SaaS","empAI":"26-50%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,8,7],"ag":"Customer support, onboarding","tal":[2,4,1],"meas":"both","met":"AI adoption rates, lines of AI generated code","sav":"11-15","hir":"reduced_1_10","gt":"Gong, Product Genie, ROI generator, email creation, AI-driven ABM","tof":[2,0,5,4],"mof":[2,6],"gi":"Too early to quantify.","ps":[2,5,3],"cb":"Yes","cbV":"SalesForce","cbD":"0.2","csat":"Don't know","eAI":"Yes","dt":"Claude, GitHub","dm":"Adoption, % AI assist lines of code","di":"Significantly positive but too early to determine impact","dinf":[2,3],"da":"api","api":"Yes, limited / in progress","rd":"20","lnch":"Yes","pt":[7,9,6,1],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 10","bm":"Horizontal SaaS","empAI":"76-100%","lClaude":0,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,12,7,9],"ag":"HR, Support","tal":[2,1,0],"meas":"both","met":"How many lines of code were written by human vs AI","sav":"11-15","hir":"expect","gt":"Market survey, data analytics, ABM planning, RFPs reply","tof":[3],"mof":[0],"gi":"Improved focus messaging.","ps":[2],"cb":"No","cbV":"Used DOTI but acquired by SF","cbD":"","csat":"","eAI":"Yes","dt":"cursor, junie, codex, ChatGPT, Gemini","dm":"Lines of code, dev velocity, escaped bugs.","di":"Velocity and quality","dinf":[2,3],"da":"api","api":"No, but its on our roadmap","rd":"10","lnch":"Yes","pt":[3,7],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":"Annual commitment"},{"co":"Company 11","bm":"Horizontal SaaS","empAI":"0-25%","lClaude":1,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,13,8,9,6],"ag":"Agent deployment is generally low. The primary use cases for the team are around information processing or coding via Copilot. So for most users the interface is prompting.","tal":[],"meas":"working","met":"Vary by function","sav":"?","hir":"unsure","gt":"Primarily using Gemini for content and account research.","tof":[0,5],"mof":[2],"gi":"No clear measure at this time","ps":[5],"cb":"No","cbV":"","cbD":"","csat":"","eAI":"Yes","dt":"Github Copilot and Cursor","dm":"% of code generated and checked in.","di":"Unclear at this time. Best estimate is 15-20% productivity gains for developers","dinf":[],"da":"manual","api":"No, and its not currently planned","rd":"0","lnch":"Yes","pt":[3,0,9,1,8,2],"pr":[4,1],"cs":"Early stage","rev":"Not sure","sg":"No pricing safeguards in place"},{"co":"Company 12","bm":"Horizontal SaaS","empAI":"51-75%","lClaude":0,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13],"ag":"Agents for internal tasks across G&A and support","tal":[2,4,1,3,0,6],"meas":"both","met":"Time, FTE, code acceptance","sav":"?","hir":"expect","gt":"Gong, Clari, Outreach","tof":[],"mof":[],"gi":"","ps":[2,5,0],"cb":"Yes","cbV":"","cbD":"","csat":"","eAI":"Yes","dt":"Cursor, Claude","dm":"Code gen, code acceptance, quality","di":"","dinf":[],"da":"manual","api":"No, and its not currently planned","rd":"","lnch":"Yes","pt":[3,7,0,9,6,2],"pr":[0,4,3,1],"cs":"Scale-up stage","rev":"31-50%","sg":"Annual commitment"},{"co":"Company 13","bm":"Vertical SaaS","empAI":"26-50%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"","uc":[0,1,5,13,10],"ag":"Implementation support/training","tal":[2],"meas":"working","met":"Development productivity, Sales/Marketing Effectiveness","sav":"0","hir":"expect","gt":"Gong, LeadIQ, Marketo, Linkedin Sales Navigator","tof":[2,0,4,3,1],"mof":[2,5,4],"gi":"Pipeline development, lead acquisition","ps":[4],"cb":"No","cbV":"none","cbD":"","csat":"","eAI":"Yes","dt":"Claude, ChatGPT","dm":"Velocity, quantity.","di":"10%? Expect much more over time.","dinf":[],"da":"mixed","api":"Yes, limited / in progress","rd":"0.2","lnch":"Yes","pt":[9,1,8,2],"pr":[0],"cs":"Scale-up stage","rev":"6-15%","sg":""},{"co":"Company 14","bm":"Vertical SaaS","empAI":"51-75%","lClaude":0,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,13,2,9],"ag":"True agentic work is predominantly used in Product and Engineering to significantly enhance prototyping, design, and development of new features. Multiple teams have deep libraries of custom GPTs to increase productivity for routine tasks.","tal":[],"meas":"both","met":"Week over week usage, Velocity of code development, Time savings","sav":"6-10","hir":"reduced_11_25","gt":"AI functionality inside Salesforce, Gong, Trumpet, Clay.","tof":[5,4,1],"mof":[2,1,0,4],"gi":"Over the last 12 months, we have reduced the amount of headcount on both the Sales and Success side, but we have matched our output over the last year with fewer bodies. This is the direct result of keeping high performers and those that adopt AI in all the ways possible.","ps":[4,5,1],"cb":"Yes","cbV":"Fin (Intercom)","cbD":"15","csat":"Unsure","eAI":"Yes","dt":"Claude Code","dm":"PRs / Engineer, Developer Experience Index, Defect Rate","di":"15-50% reduction for highly structured tasks. 10-12 hours recovered per engineer per week.","dinf":[4],"da":"mixed","api":"No, but its on our roadmap","rd":"35","lnch":"Yes","pt":[4],"pr":[2],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 15","bm":"Vertical SaaS","empAI":"0-25%","lClaude":1,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,12,4],"ag":"Customer Service, bug fixes, new enhancements, new development","tal":[2,3,6],"meas":"working","met":"Development speed, throughput. Customer Service efficiency","sav":"11-15","hir":"expect","gt":"data analysis","tof":[0],"mof":[],"gi":"","ps":[2,5],"cb":"No","cbV":"","cbD":"","csat":"","eAI":"Yes","dt":"Claude, Cursor","dm":"coming","di":"guessing 50% per developer","dinf":[0,3],"da":"mixed","api":"Yes, limited / in progress","rd":"0.3","lnch":"No","pt":[],"pr":[],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 16","bm":"Vertical SaaS","empAI":"51-75%","lClaude":1,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,2],"ag":"","tal":[2,4],"meas":"qual","met":"","sav":"0-5","hir":"reduced_1_10","gt":"","tof":[],"mof":[],"gi":"","ps":[2,4,5],"cb":"Yes","cbV":"","cbD":"","csat":"","eAI":"Yes","dt":"","dm":"","di":"","dinf":[2,3],"da":"manual","api":"No, but its on our roadmap","rd":"","lnch":"No","pt":[],"pr":[],"cs":"Scale-up stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 17","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,8,7,9,6],"ag":"Code development, customer success/support, QA automation.","tal":[2,4,1,3,7],"meas":"working","met":"time savings, productivity per developer","sav":"0","hir":"reduced_11_25","gt":"Clay, ChatGPT, Claude","tof":[2,0,4,3,1],"mof":[2,5,6],"gi":"15-25% increase in growth relative to no AI tools","ps":[2,5],"cb":"No","cbV":"","cbD":"","csat":"","eAI":"Yes","dt":"Claude, Cursor, github co-pilot, chatgpt, tabnine","dm":"No numeric metrics currently in place.","di":"at least 30-50% increase in output per developer","dinf":[],"da":"mixed","api":"No, but its on our roadmap","rd":"0.5","lnch":"Yes","pt":[0,9],"pr":[2],"cs":"Early stage","rev":"6-15%","sg":""},{"co":"Company 18","bm":"Marketplace/Transactional","empAI":"26-50%","lClaude":0,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,3,12,4,9],"ag":"Very low-impact use cases currently.","tal":[2,4,3],"meas":"quant","met":"1) ai tooling usage 2) development productivity 3) % code written with AI","sav":"0","hir":"expect","gt":"No company-led GTM AI initiatives yet.","tof":[],"mof":[2],"gi":"","ps":[5],"cb":"Yes","cbV":"Zendesk","cbD":"0.1","csat":"No material difference","eAI":"Yes","dt":"Claude","dm":"% of lines of code using AI, development throughput","di":"Estimated 25%","dinf":[4,5,2,3],"da":"api","api":"Yes, limited / in progress","rd":"0.5","lnch":"No","pt":[],"pr":[],"cs":"Early stage","rev":"","sg":""},{"co":"Company 19","bm":"Vertical SaaS","empAI":"51-75%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,7,9],"ag":"","tal":[2,4,1,3],"meas":"both","met":"Cost per support ticket, volume of code submissions, time saving","sav":"0-5","hir":"reduced_1_10","gt":"Outreach Kaia, Copy.ai, Claude/ChatGPT","tof":[5,1],"mof":[2,5],"gi":"","ps":[5],"cb":"Yes","cbV":"zendesk but moving to FIN","cbD":"0.48","csat":"up 1.4% so far. 96.4 from 95 last year","eAI":"Yes","dt":"Claude Code","dm":"","di":"","dinf":[],"da":"api","api":"No, but its on our roadmap","rd":"20","lnch":"Yes","pt":[0,4,1,2],"pr":[4,1],"cs":"Early stage","rev":"6-15%","sg":"Overages at tiered rates"},{"co":"Company 20","bm":"Vertical SaaS","empAI":"51-75%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,8,9,6],"ag":"Sales Ops agent. Prospecting agent. Support agent.","tal":[2,4,1],"meas":"working","met":"Number of Support questions answered and percentage of satisfaction","sav":"0-5","hir":"reduced_1_10","gt":"Claude","tof":[2,0,5,1],"mof":[2,5],"gi":"","ps":[2,5],"cb":"Yes","cbV":"AskAI","cbD":"0.94","csat":"94% of interactions do not create a follow-up ticket","eAI":"Yes","dt":"Claude for developers, Lovable for Product","dm":"lines of code written, increase in sprint velocity","di":"","dinf":[4,5],"da":"mixed","api":"Yes, limited / in progress","rd":"0.15","lnch":"Yes","pt":[7,0,1,8],"pr":[0,3],"cs":"Early stage","rev":"16-30%","sg":""},{"co":"Company 21","bm":"Horizontal SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,8,7,9,6],"ag":"","tal":[2,1,3,7,0,6],"meas":"both","met":"AI Usage, cost avoidance/removal, case deflection","sav":"0-5","hir":"reduced_1_10","gt":"Enterprise ChatGPT, Qualified","tof":[2,5,4],"mof":[2,5,1,3,6],"gi":"Lower cost BDR function, improved sales productivity","ps":[2,5,0],"cb":"Yes","cbV":"Forthought","cbD":"0.3","csat":"30% lower with AI","eAI":"Yes","dt":"Claude Code; Chat GPT Codex","dm":"feature development acceleration, hours saved per bug resolution","di":"20-45% faster feature development, 6-7 hours saved per bug resolution, 50-70% maintenance effort reduction, 70% faster test set up, 30% faster dev ops pipeline effort, 50% reduction in documentation effort.","dinf":[0,1,2,3,4],"da":"mixed","api":"Yes, limited / in progress","rd":"0.2","lnch":"Yes","pt":[3,7,0,4,6,1,2],"pr":[2,1],"cs":"Scale-up stage","rev":"16-30%","sg":""},{"co":"Company 22","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,13,2,12,10,7,9],"ag":"","tal":[4],"meas":"working","met":"Beginning to require engineers and product people to review AI usage","sav":"?","hir":"reduced_1_10","gt":"outbound and custom proposal creation","tof":[2,0,5],"mof":[2],"gi":"","ps":[2,5],"cb":"Yes","cbV":"Zendesk","cbD":"0.35","csat":"Not sure","eAI":"Yes","dt":"Cursor and Claude Code","dm":"Story completion, roadmap vs non-roadmap, bugs","di":"Those who use it are a lot faster.","dinf":[3],"da":"mixed","api":"Yes, limited / in progress","rd":"75","lnch":"No","pt":[],"pr":[],"cs":"Early stage","rev":"6-15%","sg":""},{"co":"Company 23","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,7,9],"ag":"All functions are deploying multiple agents across a wide range of use cases.","tal":[2,4,1,3,7,0],"meas":"both","met":"Pull request velocity, data science modeling accuracy, SALs from SDRs","sav":"0","hir":"reduced_11_25","gt":"Amplemarket, Gong, Claude, Clay.","tof":[2,0,5,4],"mof":[2,5,1],"gi":"Minimal so far, but expecting impact in Q2 from AI SDR workflows","ps":[2,5,0,1,3],"cb":"Yes","cbV":"Intercom","cbD":"0.5","csat":"10 points lower for AI","eAI":"Yes","dt":"Claude code, cursor","dm":"Pull request velocity, net code changes, time to ship features","di":"With small tasks 70%+ time reduction, with more complex tasks closer to 30-50%.","dinf":[3,4],"da":"api","api":"Yes, limited / in progress","rd":"35","lnch":"Yes","pt":[3,0,9,6,1,2],"pr":[2,0],"cs":"Scale-up stage","rev":"6-15%","sg":""},{"co":"Company 24","bm":"Vertical SaaS","empAI":"76-100%","lClaude":0,"lGPT":0,"lGemini":0,"lOther":"Y","uc":[0,1,5,11,3,13,2,12,10,7],"ag":"Data Agents for analysis, Chat Agents for support. HR agents to help staff locate internal policies.","tal":[2,4,5,6],"meas":"qual","met":"Adoption & Cycle Time","sav":"0","hir":"expect","gt":"Sana and Copilot","tof":[2,0],"mof":[2],"gi":"","ps":[4,5],"cb":"No","cbV":"Zendesk","cbD":"Still in early adoption.","csat":"Not measured yet","eAI":"Yes","dt":"Github Copilot & Cursor","dm":"Cycle time, adoption","di":"100% increase in throughput of defect resolution.","dinf":[0,3,4],"da":"mixed","api":"Yes, limited / in progress","rd":"0.15","lnch":"Yes","pt":[3,9],"pr":[0],"cs":"Early stage","rev":"Not sure","sg":""},{"co":"Company 25","bu":["tof","mof","dinf","ag","rd","rev","sav","pt"],"tofL":"Content/Campaigns, Inbound Capture, Lead Gen, Lead Scoring, Personalization, Website Chatbots","mofL":"AI Forecasting, Calendar/Scheduling, Call Transcription, Chatbots/Conversational, Demos, Outbound/Prospecting, Proposals & Contracts","dinfL":"Data Unification, Semantic Enrichment, Data Freshness, Data Quality, Access Controls","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"Y","uc":[0,1,5,11,3,13,2,12,9],"ag":"Yes \u2014 real agents running in production","tal":[6],"meas":"both","met":"Dev velocity, case deflections, test case execution time","sav":"0-5","hir":"reduced_1_10","gt":"ChatGPT for content writing, Gong for Sales Call audits.","tof":[0,1,2,3],"mof":[0,1],"gi":"Estimate impact to be huge, but not using it extensively.","ps":[2,5],"cb":"Yes","cbV":"Intercom","cbD":"0.3","csat":"About the same (4.7 AI vs 4.7 Human)","eAI":"Yes","dt":"Devin, Windsurf","tsOv":2,"dm":"DES - velocity points, test observations","di":"3-4 devs are 7-10x productive, others havent adopted it efficiently.","dinf":[0,1,2],"da":"api","api":"Yes, broadly deployed","rd":"11+","lnch":"Yes","pt":[],"pr":[],"cs":"Early stage","rev":"6%+","sg":""},{"co":"Company 26","bu":["tof","mof","dinf","ag","tal","sav","di"],"tofL":"Content/Campaigns, Inbound Capture, Lead Gen, Lead Scoring, Personalization, Website Chatbots","mofL":"AI Forecasting, Calendar/Scheduling, Call Transcription, Chatbots/Conversational, Demos, Outbound/Prospecting, Proposals & Contracts","dinfL":"Data Unification, Semantic Enrichment, Data Freshness, Data Quality, Access Controls","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,10,7,9],"ag":"Yes \u2014 real agents running in production","tal":[],"meas":"both","met":"productivity, AI product usage","sav":"6-10","hir":"reduced_11_25","gt":"Gong and Claude","tof":[0,1,2,3],"mof":[0,1,2,3,4],"gi":"","giOv":5,"ps":[2,4,0],"cb":"Yes","cbV":"Intercom","cbD":"0.7","csat":"10 points improvement","eAI":"Yes","dt":"Claude Code","tsOv":2,"dm":"Jira points resolved","di":"","diOv":2,"dinf":[0,1,2],"da":"api","api":"Yes, broadly deployed","rd":"0.3","lnch":"Yes","pt":[3,7,0,4,9,6,5,1,2],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 27","bm":"Vertical SaaS","empAI":"26-50%","lClaude":0,"lGPT":0,"lGemini":0,"lOther":"Y","uc":[0,1,5,11,3,13,2,12,4,10,8,7,9,6],"ag":"11 agents in development or deployed: Halo Agents platform (Security/Compliance), Talent Screening, Productivity Tracking, Product Requirements and Coding, Seeker Standards (KB), IT Service Desk Automation, Operational Reporting, Contract Audits, CAT Team Optimization, Regional Hiring/Workforce Deployment, CS Field Pulse.","tal":[2,4,1,3,7,6],"meas":"quant","met":"AI tool adoption rate, Copilot utilization volume","sav":"0-5","hir":"expect","gt":"Claude, ChatGPT/Gemini, Microsoft Copilot, HubSpot AI, Salesforce AI","tof":[0],"mof":[2,5,4],"gi":"Early stage. AI is amplifying marketing reach and sales efficiency.","ps":[2,4,5],"cb":"No","cbV":"Evaluating Zendesk AI","cbD":"No AI-powered support chatbot deployed.","csat":"No AI ticket handling in production.","eAI":"Yes","dt":"Claude Code, GitHub Copilot, Microsoft 365 Copilot, ChatGPT, Atlassian Rovo","dm":"5-dimension scoring model + Claude Code adoption + Copilot pilot metrics","di":"Copilot vs ChatGPT pilot: 66-95% productivity improvement in head-to-head comparison, leading to recommendation to scale Copilot enterprise-wide. Claude Code 90-day adoption: 130x growth in accepted lines. Accept rate never below 97.4% despite massive volume growth.","dinf":[0,2,3,4],"da":"mixed","api":"No, but its on our roadmap","rd":"47","lnch":"Yes","pt":[4,9,6,8,2],"pr":[2,4],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 28","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":0,"lGemini":0,"lOther":"Y","uc":[0,1,5,11,3,13,2,12,10,8,7,9,6],"ag":"Numerous. For example: (a) All customer support tickets get automated response proposal; (b) All questions to internal help-slack channels get automated response proposal; (c) RFP responses are prepopulated; (d) incoming invoices through email are automatically posted to Netsuite.","tal":[2,4],"meas":"qual","met":"AI tool adoption (by tool)","sav":"0","hir":"reduced_11_25","gt":"Claude, realm, Chorus.ai, ZoomInfo copilot, Chilipiper, Clay","tof":[2,0,4],"mof":[2,5,6],"gi":"Not possible to quantify; competition is also adopting.","ps":[2,5,1],"cb":"Yes","cbV":"Freshdesk + realm","cbD":"N/A for internal use only","csat":"N/A for internal use only","eAI":"Yes","dt":"Claude code; Cursor","dm":"","di":"Hard to quantify but substantial.","dinf":[4],"da":"api","api":"Yes, limited / in progress","rd":"40","lnch":"Yes","pt":[3,7,4,1],"pr":[0],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 29","bm":"Horizontal SaaS","empAI":"76-100%","lClaude":0,"lGPT":0,"lGemini":0,"lOther":"","uc":[0,1,5,3,13,2,12,10,8,7,9,6],"ag":"Early stage, currently defining and designing agent approach.","tal":[2,4,1,3,0],"meas":"both","met":"","sav":"0-5","hir":"reduced_26_50","gt":"Glyphic, revgentic","tof":[2,0,4],"mof":[2,5,1,6,4],"gi":"Clay for lead enrichment, tooling to partially replace human BDR functions.","ps":[5,1],"cb":"No","cbV":"N/a","cbD":"N/a","csat":"N/a","eAI":"Yes","dt":"Claude code","dm":"Roadmap velocity, testing velocity, bug reduction.","di":"Claude code led to over 20% productivity gain","dinf":[0,1,2,3],"da":"api","api":"","rd":"70","lnch":"Yes","pt":[8],"pr":[2],"cs":"Scale-up stage","rev":"51%+","sg":""},{"co":"Company 30","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,8,7,9],"ag":"Various agents deployed across each team.","tal":[1,3],"meas":"working","met":"Time savings, FTE, Leverage","sav":"0","hir":"unsure","gt":"Clay, Qualified, Gong AI","tof":[2,0,5,3],"mof":[2,5,3],"gi":"Too early to tell.","ps":[2,5],"cb":"Yes","cbV":"Intercom Finn","cbD":"50","csat":"85.5 AI BOT vs 74.7% for Human","eAI":"Yes","dt":"Claude Code","dm":"Linear B, DORA Metrics","di":"5-10% due to bottlenecks in our processes","dinf":[],"da":"manual","api":"No, but its on our roadmap","rd":"11","lnch":"Yes","pt":[3],"pr":[],"cs":"Scale-up stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 31","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":0,"lOther":"","uc":[0,1,5,11,3,13,12,8],"ag":"Working heavily on voice AI agents; multiple agents in development.","tal":[4,1],"meas":"quant","met":"Usage of chat with magic","sav":"16+","hir":"reduced_26_50","gt":"Building curated lists","tof":[2,3],"mof":[5,3,6],"gi":"Data enrichment has been the primary value driver.","ps":[2,4,0,3],"cb":"Yes","cbV":"","cbD":"0.3","csat":"Minimal","eAI":"Yes","dt":"Claude Code","dm":"Pull requests","di":"20% improvement","dinf":[3],"da":"manual","api":"","rd":"0.4","lnch":"Yes","pt":[3,0,4,9,5],"pr":[2],"cs":"Scale-up stage","rev":"","sg":""},{"co":"Company 32","bm":"Horizontal SaaS","empAI":"76-100%","lClaude":0,"lGPT":1,"lGemini":1,"lOther":"","uc":[0,1,5,11,3,13,2,12,4,10,9],"ag":"Developing Long Running Agents (LRA) to support delivery teams across 6 functions.","tal":[],"meas":"both","met":"Accepted AI/Pull Requests, Case Deflection Rate","sav":"0","hir":"reduced_1_10","gt":"ChatGPT (custom GPTs), Claude, Hubspot Breeze, Zoominfo, Gong, IronClad","tof":[0],"mof":[2,5,0],"gi":"Roughly 10-20% efficiency gains in prospecting and follow up.","ps":[5,1],"cb":"Yes","cbV":"Zendesk","cbD":"1.5","csat":"Not measured","eAI":"Yes","dt":"Claude Code and GitHub CoPilot","dm":"Accepted AI/Pull Requests","di":"20-50% more productive output / efficiency","dinf":[],"da":"manual","api":"Yes, limited / in progress","rd":"0.05","lnch":"No","pt":[],"pr":[],"cs":"Early stage","rev":"0 - 5% of 2026 bookings/new revenue","sg":""},{"co":"Company 33","bm":"Vertical SaaS","empAI":"76-100%","lClaude":1,"lGPT":1,"lGemini":1,"lOther":"Y","uc":[0,1,5,11,3,13,2,12,10,7,9],"ag":"Customer Support, Sales Enablement, Content Generation, Customer Success Enablement, AI SDR","tal":[2,4,0,6],"meas":"both","met":"Time savings, CAC improvements, GRR","sav":"11-15","hir":"reduced_1_10","gt":"Swyft AI, Gong, Clay, Glean, Claude Cowork","tof":[2,0,4,3,1],"mof":[2,5],"gi":"Saving reps time, improving the quality of rep conversations","ps":[2,4,5],"cb":"Yes","cbV":"SwiftCX","cbD":"30-40 average, 60 highest","csat":"About the same so far","eAI":"Yes","dt":"CoPilot, Claude Code, Warp","dm":"Time savings, improved test coverage","di":"20% average. Best team is 50%+ with 90% of code being started with Claude Code","dinf":[0,1,3,4],"da":"api","api":"Yes, broadly deployed","rd":"12","lnch":"Yes","pt":[3,7,6,5,1],"pr":[2],"cs":"Early stage","rev":"16-30%","sg":""},{"co":"Company 34","bm":"Vertical SaaS","empAI":"51-75%","lClaude":0,"lGPT":1,"lGemini":0,"lOther":"","uc":[0,1,5,11,13,2,10,8],"ag":"For customers: Developing COI agent to analyze and validate certificates of insurance. Internally: Using Cursor agent in Slack for product questions and bug triage.","tal":[2],"meas":"none","met":"","sav":"?","hir":"no","gt":"ChatGPT, Amplemarket, Lovable, Claude, Clay, Opusclip","tof":[2,0,4],"mof":[2,5,6],"gi":"Amplemarket improved lead contact quality; Clay used to build enriched target lists","ps":[5],"cb":"Yes","cbV":"Finn (Intercom)","cbD":"50","csat":"AI 92.9% vs human 96.3%","eAI":"Yes","dt":"Cursor","dm":"Cycle planning & execution capacity","di":"Estimated 3x gain in execution velocity, alongside improvements in product quality.","dinf":[],"da":"mixed","api":"No, and its not currently planned","rd":"20","lnch":"Yes","pt":[0,4,1,2],"pr":[2,3],"cs":"Scale-up stage","rev":"6-15%","sg":""},{"co":"Company 35","bm":"Vertical SaaS","empAI":"51-75%","lClaude":0,"lGPT":0,"lGemini":1,"lOther":"","uc":[0,1,11,13,12,10,9],"ag":"Sales prospect research/qualification, RFP/QA questionnaire filling, translation of application content as part of CI/CD, testing of APIs for BI framework, release documentation generation, release management tooling (risk assessment etc.).","tal":[2,4],"meas":"working","met":"Only quantitative data we have is for developers based on Jellyfish","sav":"?","hir":"reduced_1_10","gt":"HubSpot AI and Clay for data enrichment. Gong AI features.","tof":[2],"mof":[2,5],"gi":"No compelling attribution data available.","ps":[2,4,5,0],"cb":"No","cbV":"eesel.ai + Zendesk","cbD":"AI assist only","csat":"","eAI":"Yes","dt":"Primary is copilot + kiro. Some team members also using Claude or Cursor.","dm":"Jellyfish data","di":"Awaiting more complete data from Jellyfish.","dinf":[0,3],"da":"api","api":"Yes, limited / in progress","rd":"12","lnch":"Yes","pt":[3,7],"pr":[4],"cs":"Scale-up stage","rev":"Not sure","sg":""}];
+const D=_D.map(c=>{const r={...c};r.uc=(c.uc||[]).map(i=>L.uc[i]);r.tof=(c.tof||[]).map(i=>L.tof[i]);r.mof=(c.mof||[]).map(i=>L.mof[i]);r.ps=(c.ps||[]).map(i=>L.ps[i]);r.pt=(c.pt||[]).map(i=>L.pt[i]);r.pr=(c.pr||[]).map(i=>L.pr[i]);r.tal=(c.tal||[]).map(i=>L.tal[i]);r.dinf=(c.dinf||[]).map(i=>L.dinf[i]);return r;});
+
+
+const DT={"Company 1":"Amir + Joe Flackberg","Company 2":"Blob","Company 3":"Blob","Company 4":"Israel","Company 5":"Israel","Company 6":"Israel","Company 7":"Israel","Company 8":"Amir + Joe Flackberg","Company 9":"Amir + Joe Flackberg","Company 10":"Israel","Company 11":"Amir + Joe Flackberg","Company 12":"Blob","Company 13":"Blob","Company 14":"Blob","Company 15":"Blob","Company 16":"Blob","Company 17":"Israel","Company 18":"Blob","Company 19":"Israel","Company 20":"Amir + Joe Flackberg","Company 21":"Israel","Company 22":"Blob","Company 23":"Blob","Company 24":"Blob","Company 25":"Amir + Joe Flackberg","Company 26":"Blob","Company 27":"Amir + Joe Flackberg","Company 28":"Amir + Joe Flackberg","Company 29":"Israel","Company 30":"Amir + Joe Flackberg","Company 31":"Amir + Joe Flackberg","Company 32":"Amir + Joe Flackberg","Company 33":"Amir + Joe Flackberg","Company 34":"Blob","Company 35":"Blob"}
+
+const TC={"All":{t:"#64748B",b:"#F1F5F9",br:"#E2E8F0"},"Blob":{t:"#0369A1",b:"#F0F9FF",br:"#BAE6FD"},"Israel":{t:"#047857",b:"#ECFDF5",br:"#A7F3D0"},"J2K":{t:"#B45309",b:"#FFFBEB",br:"#FDE68A"},"Amir + Joe Flackberg":{t:"#1D4ED8",b:"#EFF6FF",br:"#BFDBFE"}};
+
+
+
+const parseRD=v=>{if(!v)return 0;const s=String(v).toLowerCase().replace(/[~%+]/g,"").trim();if(!s||s==="zero"||s==="0"||s.includes("not sure"))return 0;const r=s.match(/(\d+)\s*[-]\s*(\d+)/);if(r)return(parseFloat(r[1])+parseFloat(r[2]))/2;const n=parseFloat(s);if(!isNaN(n))return n<=1?n*100:n;const m=s.match(/(\d+)/);return m?parseFloat(m[1]):0};
+const parseDefl=v=>{if(!v||/^n\/a$/i.test(String(v).trim()))return null;const s=String(v).toLowerCase().replace(/[~%+>]/g,"").trim();const r=s.match(/(\d+)\s*[-]\s*(\d+)/);if(r){const m=(parseFloat(r[1])+parseFloat(r[2]))/2;return m>1?m:m*100}const n=s.match(/^([\d.]+)/);if(n){const x=parseFloat(n[1]);return x<=1?x*100:x}return null};
+const parseGI=gi=>{if(!gi||gi.length<3)return 0;const s=gi.toLowerCase();if(["too early","not yet","unclear","no clear","not sure","minimal","unsure","no impact","not possible","early stage","difficult"].some(u=>s.includes(u)))return 0;const r=[...s.matchAll(/(\d+)\s*[-]\s*(\d+)\s*%/g)];for(const m of r)if(parseInt(m[2])>=10)return parseInt(m[2]);const p=[...s.matchAll(/(\d+)\s*%/g)].map(m=>parseInt(m[1])).filter(p=>p>=10);if(p.length)return Math.max(...p);const g=s.match(/(\d+)\s*%\s*to\s*(\d+)\s*%/);if(g){const d=parseFloat(g[2])-parseFloat(g[1]);if(d>=10)return d}return 0};
+const parseDI=di=>{if(!di||di.length<5)return 0;const s=di.toLowerCase();if(["too early","not yet","unclear","hard to quantify","infant","no impact","not using","awaiting","significant but not","not quantified"].some(u=>s.includes(u)))return 0;if(/\b[3-9]x\b|\bdoubling\b/.test(s))return 3;const h=s.match(/(\d+)\s*[-]\s*(\d+)\s*%/g)||[];if(h.some(m=>Math.max(...m.match(/\d+/g).map(Number))>=50))return 3;if(h.length>0)return 2;const p=[...s.matchAll(/(\d+)\s*%/g)].map(m=>parseInt(m[1]));if(p.some(n=>n>=50))return 3;if(p.some(n=>n>=1))return 2;return 1};
+const hasRA=(ag,c)=>{if(!ag||ag.length<10)return false;const l=ag.toLowerCase();if(["none","not using","n/a","were not","we are not","no ai","not yet","not currently","havent","large gap","early stage, currently"].some(n=>l.startsWith(n)||l.includes(n)))return false;if(/\bno\b/.test(l)&&(l.startsWith("no ")||l.includes(" no agent")||l.includes(" no ai")))return false;const dt=(c&&c.dt)?c.dt.toLowerCase():"";const hc=/cursor|claude code|codex|devin|windsurf|copilot|kiro/.test(dt);const wk=["support","sales","rfp","proposal","sdr","triage","customer","knowledge","hr","finance","deployed","deploying","production","running","live","onboarding","data","bi agent","ops","automation","code review"];const hw=wk.some(k=>l.includes(k));const sd=["deployed","deploying","running","live","in production"].some(k=>l.includes(k));const ma=(l.match(/\bagent/g)||[]).length>=2;const aa=l.includes("agentic");return(hc&&hw)||(sd&&hw)||ma||aa||hw};
+const sDT=dt=>{if(!dt||dt.length<2)return 0;const s=dt.toLowerCase();if(["not using","n/a","dont know","chat","website"].some(x=>s===x||s.startsWith(x+" ")))return 0;const Q=["claude","anthropic","chatgpt","openai","codex","cursor"];const A=["claude","anthropic","chatgpt","openai","codex","cursor","copilot","github","windsurf","devin","tabnine","codeium","junie","lovable","kiro","rovo"];const hQ=Q.some(t=>s.includes(t));const tot=A.filter(t=>s.includes(t)).length;if(tot>=2&&hQ)return 2;if(hQ||tot>=1)return 1;return 1};
+const pCSAT=v=>{if(!v||v.length<2)return null;const s=v.trim().toLowerCase();if(["n/a","unknown","not sure","unsure","minimal","not applicable","not measured","too small","don't know","dont know","did not measure"].some(x=>s.includes(x))||/\bnr\b/.test(s))return null;if((s.match(/%/g)||[]).length>=2)return"p";if(s.includes("same")||s.includes("about the same"))return"p";const n=[...s.matchAll(/(\d+\.?\d*)/g)].map(m=>parseFloat(m[1])).filter(n=>n>0&&n<=100);if(n.length>=2)return"p";if(n.length===1)return"p";if(s.includes("higher")||s.includes("better")||s.includes("improve"))return"l";return"p"};
+
+const UNC=["too early","not yet","unclear","hard to quantify","infant","no impact","not using","awaiting","significant but not","not quantified","unsure","tbd","no metric"];
+
+function sI(c){const c1=c.empAI==="76-100%",c2=hasRA(c.ag,c),c3=c.meas==="both",c4=["6-10","11-15","16+"].includes(c.sav),c5=!!(c.lClaude||c.lGPT||c.lGemini||c.lOther);const n=[c1,c2,c3,c4,c5].filter(Boolean).length;return{tier:n===5?"Leading":n>=3?"Progressing":"Needs Attention"}}
+function sH(c){const hr=c.tal&&c.tal.length>=1,big=["reduced_11_25","reduced_26_50"].includes(c.hir),some=["reduced_1_10","expect"].includes(c.hir);return{tier:hr&&big?"Leading":hr||some?"Progressing":"Needs Attention"}}
+function sG(c){const t=c.tof?c.tof.length:0,m=c.mof?c.mof.length:0,giScore=c.giOv!==undefined?c.giOv:parseGI(c.gi),gi=giScore>=10;const n=[t>=4,m>=5,gi].filter(Boolean).length;return{tier:n===3?"Leading":n===2?"Progressing":"Needs Attention"}}
+function sPS(c){const c1=c.cb==="Yes",df=parseDefl(c.cbD),c2=df!==null&&df>=70,c3=pCSAT(c.csat)!==null;const n=[c1,c2,c3].filter(Boolean).length;return{tier:n===3?"Leading":n===2?"Progressing":"Needs Attention"}}
+function sDP(c){const c1=c.eAI==="Yes",c2=(c.tsOv!==undefined?c.tsOv:sDT(c.dt))>=2,hm=c.dm&&c.dm.length>5&&!UNC.some(u=>(c.dm||"").toLowerCase().includes(u)),diScore=c.diOv!==undefined?c.diOv:parseDI(c.di),c3=hm&&diScore>=3;const n=[c1,c2,c3].filter(Boolean).length;return{tier:n===3?"Leading":n===2?"Progressing":"Needs Attention"}}
+function sDI(c){const ha=(c.dinf&&c.dinf.length>0)||c.da||c.api;if(!ha)return{tier:"N/A",na:true};const c1=c.dinf?c.dinf.length>=3:false,c2=c.da==="api",c3=c.api&&c.api.includes("broadly deployed");const n=[c1,c2,c3].filter(Boolean).length;return{tier:n===3?"Leading":n===2?"Progressing":"Needs Attention"}}
+function sPR(c){const ha=c.lnch||(c.pt&&c.pt.length>0)||(c.pr&&c.pr.length>0)||c.cs||c.rev||c.rd;if(!ha)return{tier:"N/A",na:true};const ADV=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];const c1=c.lnch==="Yes"&&c.pt&&c.pt.some(p=>ADV.includes(p)),c2=c.rev&&["6-15","16-30","31-50","51"].some(x=>c.rev.includes(x)),c3=parseRD(c.rd)>10;const n=[c1,c2,c3].filter(Boolean).length;return{tier:n===3?"Leading":n===2?"Progressing":"Needs Attention"}}
+
+const SECS=[{k:"product",l:"AI Product Strategy",f:sPR},{k:"devprod",l:"Dev Productivity",f:sDP},{k:"datainfra",l:"Data Infrastructure",f:sDI},{k:"gtm",l:"GTM",f:sG},{k:"postsales",l:"Post-Sales",f:sPS},{k:"hiring",l:"Hiring & Talent",f:sH},{k:"internal",l:"General Enablement",f:sI}];
+
+function getScores(c){return SECS.map(s=>({...s,...s.f(c)}))}
+function getOverall(ld){return ld>=4?"leading":ld>=2?"progressing":"attention"}
+
+function getItems(c,k){
+const tools=[c.lClaude&&"Claude",c.lGPT&&"ChatGPT",c.lGemini&&"Gemini",c.lOther&&"Other"].filter(Boolean);
+const g=(s,l,sub)=>({status:s,label:l,sub:sub||null});
+if(k==="internal"){
+const i=[];
+if(c.empAI==="76-100%")i.push(g("good","76-100% of employees using AI",c.uc&&c.uc.length>0?"Use cases: "+c.uc.join(", "):null));else if(c.empAI==="51-75%")i.push(g("ok","51-75% of employees using AI",c.uc&&c.uc.length>0?"Use cases: "+c.uc.join(", "):null));else i.push(g("bad",(c.empAI||"0-25%")+" of employees using AI",c.uc&&c.uc.length>0?"Use cases: "+c.uc.join(", "):null));
+const agSub=c.bu&&c.bu.includes("ag")?null:(c.ag&&c.ag.length>5?c.ag:null);if(hasRA(c.ag,c))i.push(g("good","Building internal AI agents",agSub));else i.push(g("bad","No internal agents deployed",agSub));
+if(c.meas==="both")i.push(g("good","Tracking both quantitative and qualitative AI impact"));else if(c.meas==="quant")i.push(g("good","Tracking quantitative AI impact"));else if(c.meas==="qual")i.push(g("ok","Tracking qualitative AI impact only (no hard metrics)"));else if(c.meas==="working")i.push(g("ok","Building AI impact measurement framework"));else i.push(g("bad","Not measuring AI impact"));
+const savLabel=c.sav==="16+"?"16%+":c.sav+"%";if(["16+","11-15","6-10"].includes(c.sav))i.push(g("good",savLabel+" cost savings from AI"));else if(c.sav==="0-5")i.push(g("ok","0-5% cost savings from AI"));else i.push(g("bad","No cost savings reported from AI"));
+if(tools.length>0)i.push(g("good","Org-wide license for at least one AI tool",tools.join(", ")));else i.push(g("bad","No org-wide AI license"));
+return i}
+if(k==="hiring"){const i=[];if(c.tal&&c.tal.length>=1)i.push(g("good","AI/ML roles hired"+(c.bu&&c.bu.includes("tal")?"":": "+c.tal.join(", "))));else i.push(g("bad","No dedicated AI/ML roles"));if(c.hir==="reduced_26_50")i.push(g("good","AI enabled 26-50% reduction in hiring"));else if(c.hir==="reduced_11_25")i.push(g("good","AI enabled 11-25% reduction in hiring"));else if(c.hir==="reduced_1_10")i.push(g("ok","AI enabled 1-10% reduction in hiring"));else if(c.hir==="expect")i.push(g("ok","Expecting hiring impact"));else i.push(g("bad","No hiring impact"));return i}
+if(k==="gtm"){const i=[],tf=c.tof?c.tof.length:0,mf=c.mof?c.mof.length:0,gi=parseGI(c.gi);
+const ALL_TOF=L.tof;const ALL_MOF=L.mof;
+const tofSub=c.tofL?c.tofL:(c.bu&&c.bu.includes("tof"))?(c.tof&&c.tof.length>0?c.tof.map(i=>ALL_TOF[i]).filter(Boolean).join(", "):null):ALL_TOF.map(area=>(c.tof&&c.tof.includes(area)?"✓ "+area:"✗ "+area)).join(" · ");
+const mofSub=c.mofL?c.mofL:(c.bu&&c.bu.includes("mof"))?(c.mof&&c.mof.length>0?c.mof.map(i=>ALL_MOF[i]).filter(Boolean).join(", "):null):ALL_MOF.map(area=>(c.mof&&c.mof.includes(area)?"✓ "+area:"✗ "+area)).join(" · ");
+const tofLabel=(c.tofL||(c.bu&&c.bu.includes("tof")))?"Using AI in "+(c.bu&&c.bu.includes("tof")?(tf>=4?"4+":tf>=2?"2-3":"0-1"):tf)+" of 6 of the following top-of-funnel areas:":"Using AI in "+tf+" of 6 top-of-funnel areas";
+const mofLabel=(c.mofL||(c.bu&&c.bu.includes("mof")))?"Using AI in "+(c.bu&&c.bu.includes("mof")?(mf>=5?"5+":mf>=2?"2-4":"0-1"):mf)+" of 7 of the following mid-funnel areas:":"Using AI in "+mf+" of 7 mid-funnel areas";
+i.push(g(tf>=4?"good":tf>=2?"ok":"bad",tofLabel,tofSub));
+i.push(g(mf>=5?"good":mf>=2?"ok":"bad",mofLabel,mofSub));
+const giScoreLocal=c.giOv!==undefined?c.giOv:parseGI(c.gi);const giSub=(c.giOv!==undefined||!c.gi||c.gi.length<=3)?null:c.gi;if(giScoreLocal>=10)i.push(g("good","AI-driven GTM improvement ≥10%",giSub));else if(giScoreLocal>0)i.push(g("ok","AI-driven GTM improvement below 10%",giSub));else i.push(g("bad","No quantified GTM improvement from AI",giSub));
+return i}
+if(k==="postsales"){const i=[];
+const cbVStr=c.cbV&&c.cbV.length>1?c.cbV.split(".")[0]:null;
+if(c.cb==="Yes")i.push(g("good","AI chatbot deployed",cbVStr));else i.push(g("bad","No AI chatbot"));
+if(c.cb==="Yes"){
+  const df=parseDefl(c.cbD);
+  const dfSub=(df!==null&&!(c.bu&&c.bu.includes("cbD")))?Math.round(df)+"% of support tickets resolved by AI without human intervention":null;if(df!==null&&df>=70)i.push(g("good","≥70% AI chatbot deflection rate",dfSub));else if(df!==null)i.push(g("ok","<70% AI chatbot deflection rate",dfSub));else i.push(g("bad","AI ticket deflection rate not measured"));
+  const cs=pCSAT(c.csat);
+  const csatSub=c.csat&&c.csat.length>2?c.csat:null;
+  if(cs)i.push(g("good","Measuring AI CSAT",csatSub));else i.push(g("bad","CSAT not measured"));
+}
+return i}
+if(k==="devprod"){const i=[];
+if(c.eAI!=="Yes")i.push(g("bad","Engineering team not using AI for code generation"));else i.push(g("good","Engineering team uses AI for code generation"));
+const ts=c.tsOv!==undefined?c.tsOv:sDT(c.dt);
+if(ts>=2)i.push(g("good","Using 2+ AI dev tools",c.dt&&c.dt.length>2?"Tools: "+c.dt:null));else if(ts===1)i.push(g("ok","Using 1 AI dev tool",c.dt&&c.dt.length>2?"Tool: "+c.dt:null));else i.push(g("bad","No AI dev tools named"));
+const hm=c.dm&&c.dm.length>5&&!UNC.some(u=>(c.dm||"").toLowerCase().includes(u));
+const diScore=c.diOv!==undefined?c.diOv:parseDI(c.di);
+const dmNoMetric=c.dm&&/no numeric|not track|no metric|none|coming/i.test(c.dm);const dmClean=c.dm&&c.dm.trim().toLowerCase()!=="coming"&&!dmNoMetric?c.dm:null;const prodSub=(c.diOv!==undefined)?null:[hm&&dmClean?"Metric: "+dmClean:null,c.di&&c.di.length>5?c.di:null].filter(Boolean).join(" · ")||null;const noMetricsSub=!hm?"No numeric metrics":null;
+if(hm&&diScore>=3)i.push(g("good","50%+ productivity gain from use of AI tracked",prodSub));else if(hm&&diScore>=1)i.push(g("ok","0-49% productivity gain from use of AI",prodSub));else i.push(g("bad","No metrics or impact tracked from use of AI",noMetricsSub));
+return i}
+if(k==="datainfra"){const i=[],dl=c.dinf?c.dinf.length:0;
+const ALL_DINF=["Data Unification","Semantic Enrichment","Data Freshness","Data Quality","Access Controls"];
+const coveredDinf=ALL_DINF.filter(area=>c.dinf&&c.dinf.includes(area));
+const missingDinf=ALL_DINF.filter(area=>!c.dinf||!c.dinf.includes(area));
+const dinfSub=c.dinfL?c.dinfL:(c.bu&&c.bu.includes("dinf"))?(c.dinf&&c.dinf.length>0?c.dinf.map(i=>ALL_DINF[i]).filter(Boolean).join(", "):null):ALL_DINF.map(area=>(c.dinf&&c.dinf.includes(area)?"✓ "+area:"✗ "+area)).join(" · ");
+const dlLabel=(c.bu&&c.bu.includes("dinf"))?(dl>=3?"3+":dl>=2?"2":"0-1"):dl;const dlMain=(c.dinfL||( c.bu&&c.bu.includes("dinf")))?"Investing in "+dlLabel+" of 5 of the following data infra areas:":"Investing in "+dlLabel+" of 5 data infra areas";if(dl>=3)i.push(g("good",dlMain,dinfSub));else if(dl===2)i.push(g("ok",dlMain,dinfSub));else i.push(g("bad",dlMain,dinfSub));
+if(c.da==="api")i.push(g("good","Core data is accessible via APIs (AI-ready)"));else if(c.da==="mixed")i.push(g("ok","Mix of API and manual data access"));else i.push(g("bad","Data requires manual exports (not AI-ready)"));
+if(c.api&&c.api.includes("broadly"))i.push(g("good","API/MCP broadly deployed"));else if(c.api&&(c.api.includes("limited")||c.api.includes("progress")))i.push(g("ok","API/MCP in progress"));else i.push(g("bad","API/MCP not deployed"));
+return i}
+if(k==="product"){const ADV=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];const i=[],ln=c.lnch==="Yes",ha=ln&&c.pt&&c.pt.some(p=>ADV.includes(p));const ADV_LABELS=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];const advPt=c.pt?c.pt.filter(p=>ADV_LABELS.includes(p)):[];const ptSub=(advPt.length>0&&!(c.bu&&c.bu.includes("pt")))?advPt.join(", "):null;const BASIC_LABELS=["Copilot/Assistant","Search & Query","Content Generation","Personalization","Recommendations"];const basicPt=c.pt?c.pt.filter(p=>BASIC_LABELS.includes(p)):[];const basicPtSub=basicPt.length>0?basicPt.join(", "):null;if(ha)i.push(g("good","Advanced AI product launched",ptSub));else if(ln)i.push(g("ok","Basic AI product only",basicPtSub));else i.push(g("bad","No AI product launched"));const rh=c.rev&&["6-15","16-30","31-50","51","6%+","6%"].some(x=>c.rev.includes(x));const revKnown=c.rev&&c.rev.length>2&&!c.rev.toLowerCase().includes("not sure")&&!c.rev.toLowerCase().includes("unknown");const revPct=(c.rev||"").replace(/\s*of\s+.*$/i,"").replace(/\s*of\s+2026.*/i,"").trim();if(rh)i.push(g("good","AI accounts for "+revPct+" of revenue"));else if(revKnown)i.push(g("ok","AI accounts for "+revPct+" of revenue"));else i.push(g("bad","AI revenue contribution unknown"));const rd=parseRD(c.rd);const rdRaw=parseFloat(String(c.rd||"").replace(/[~%+]/g,"").trim()),rdDisp=(!isNaN(rdRaw)&&rdRaw>0)?(rdRaw<=1?+(rdRaw*100).toFixed(2):rdRaw):null,rdSub=(rdDisp!==null&&!String(c.rd||"").includes("+"))?"R&D investment in AI: "+rdDisp+"%":null;if(rd>10)i.push(g("good",">10% of R&D investment focused on AI",rdSub));else if(rd>=1)i.push(g("ok","1–10% of R&D investment focused on AI",rdSub));else i.push(g("bad","Minimal R&D investment focused on AI",rdSub));return i}
+return[]}
+
+const SC={"General Enablement":{b:"#F0FDF4",t:"#15803D",br:"#BBF7D0"},"Hiring & Talent":{b:"#FFFBEB",t:"#B45309",br:"#FDE68A"},"GTM":{b:"#EFF6FF",t:"#1D4ED8",br:"#BFDBFE"},"Post-Sales":{b:"#FAF5FF",t:"#7E22CE",br:"#E9D5FF"},"Dev Productivity":{b:"#ECFDF5",t:"#047857",br:"#A7F3D0"},"Data Infrastructure":{b:"#F0F9FF",t:"#0369A1",br:"#BAE6FD"},"AI Product Strategy":{b:"#FDF2F8",t:"#BE185D",br:"#FBCFE8"}};
+
+function getPVC(c){
+const items=[];
+const tools=[c.lClaude&&"Claude",c.lGPT&&"ChatGPT",c.lGemini&&"Gemini",c.lOther&&"Other"].filter(Boolean);
+const ADV=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];
+const PAID=["Premium Tier","Usage-Based","Seat-Based","Outcome-Based"];
+const HL={reduced_26_50:"reduced hiring by 26-50%",reduced_11_25:"reduced hiring by 11-25%",reduced_1_10:"reduced hiring by 1-10% (below 11%)",expect:"expecting AI to impact hiring but not yet realized",no:"reported no AI impact on hiring",unsure:"is unsure of AI hiring impact"};
+
+const advT=c.lnch==="Yes"&&c.pt?c.pt.filter(p=>ADV.includes(p)):[];
+const scUp=c.cs&&c.cs.toLowerCase().includes("scale-up");
+items.push({title:"Launched an AI Product",sec:"AI Product Strategy",goal:"Advanced AI product shipped with high customer adoption",done:c.lnch==="Yes"&&advT.length>0&&scUp,detail:c.lnch!=="Yes"?c.co+" has no AI products launched yet":advT.length===0?c.co+" launched basic AI products only":c.co+" launched advanced AI: "+advT.join(", ")+(c.cs?" - Adoption: "+c.cs:"")});
+
+const pm=c.pr?c.pr.filter(p=>PAID.includes(p)):[];
+items.push({title:"AI Pricing in Place",sec:"AI Product Strategy",goal:"Pricing model that monetizes value from AI",done:pm.length>0,detail:pm.length>0?c.co+" monetizes AI via: "+pm.join(", "):c.co+" has no paid AI monetization model"});
+
+const hm=c.dm&&c.dm.length>5&&!UNC.some(u=>(c.dm||"").toLowerCase().includes(u));
+const dpM=c.di?c.di.match(/(\d+)/g):null;
+const dpct=dpM?Math.max(...dpM.map(Number).filter(n=>n<=100)):null;
+items.push({title:"AI in Engineering",sec:"Dev Productivity",goal:"20%+ dev productivity gains",done:c.eAI==="Yes"&&hm&&dpct&&dpct>=20,detail:c.eAI!=="Yes"?c.co+" has not reported using AI for engineering":c.co+" uses AI tools: "+(c.dt||"none")+(dpct?" - "+dpct+"% gain"+(dpct>=20?" (meets 20%+)":" (below 20%)"):" - not quantified")});
+
+const apiOk=c.da==="api"&&c.api&&(c.api.includes("broadly")||c.api.includes("limited")||c.api.includes("progress"));
+const DAT={api:"has core data via APIs",mixed:"has some APIs but significant data locked",manual:"requires manual exports","?":"has not reported accessibility"};
+items.push({title:"API-Ready Data Infrastructure",sec:"Data Infrastructure",goal:"Core data via APIs + API/MCP layer built or in progress",done:apiOk,detail:c.co+" "+(DAT[c.da]||"has not reported")+" - "+(c.api||"no API/MCP plan")});
+
+const tfc=c.tof?c.tof.length:0,mfc=c.mof?c.mof.length:0,gi=parseGI(c.gi);
+items.push({title:"GTM AI Active",sec:"GTM",goal:"AI across top- and mid-funnel with 10%+ quantified impact",done:tfc>=4&&mfc>=5&&gi>=10,detail:c.co+" has AI in "+tfc+" of 6 ToF and "+mfc+" of 7 MoF areas - "+(gi>=10?"GTM impact: "+Math.round(gi)+"%+":"GTM impact below 10%")});
+
+const df=parseDefl(c.cbD),cs=pCSAT(c.csat);
+items.push({title:"AI Chatbot/Agent Deployed",sec:"Post-Sales",goal:"AI chatbot live with 70%+ deflection and CSAT measured",done:c.cb==="Yes"&&df!==null&&df>=70&&cs!==null,detail:c.cb!=="Yes"?c.co+" has no AI chatbot":c.co+" has "+(c.cbV||"chatbot")+" deployed"+(df!==null?" - "+Math.round(df)+"% deflection":" - deflection not measured")+(cs?" - CSAT measured":" - CSAT not measured")});
+
+items.push({title:"Evolving Talent Strategy",sec:"Hiring & Talent",goal:"Hiring for AI expertise and capability",done:c.tal&&c.tal.length>=1,detail:c.tal&&c.tal.length>=1?c.co+" has hired: "+c.tal.join(", "):c.co+" has no dedicated AI/ML roles"});
+
+items.push({title:"Optimize Org Structure",sec:"Hiring & Talent",goal:"Reduced or avoiding hiring by 11%+",done:["reduced_11_25","reduced_26_50"].includes(c.hir),detail:c.co+" has "+(HL[c.hir]||"not reported hiring impact")});
+
+items.push({title:"High Employee AI Adoption",sec:"General Enablement",goal:"Vast majority of employees using AI daily",done:c.empAI==="76-100%"&&tools.length>0,detail:c.co+" has "+(c.empAI||"unknown")+" employees using AI"+(tools.length?" - Licensed: "+tools.join(", "):" - No licensed tool")});
+
+const trk=c.meas==="both"&&(["6-10","11-15","16+"].includes(c.sav)||["reduced_11_25","reduced_26_50","reduced_1_10"].includes(c.hir));
+const td=[];
+if(c.meas==="both")td.push("tracking quant + qual");else if(c.meas==="quant")td.push("tracking quant only");else if(c.meas==="qual")td.push("tracking qual only");else if(c.meas==="working")td.push("building framework");else td.push("not measuring");
+if(c.sav&&c.sav!=="0"&&c.sav!=="?")td.push(c.sav+"% savings");
+if(c.hir&&c.hir.startsWith("reduced")){const m={reduced_1_10:"1-10%",reduced_11_25:"11-25%",reduced_26_50:"26-50%"};td.push("reduced hiring "+m[c.hir])}
+items.push({title:"Tracking & Measuring Results",sec:"General Enablement",goal:"Quantifying AI impact and incorporating into budgets and hiring",done:trk,detail:c.co+" is "+td.join(" - ")});
+return items}
+
+function SD({c,sk}){const items=getItems(c,sk);return(<div style={{display:"flex",flexDirection:"column",gap:3}}>{items.map((it,i)=>{const cl=it.status==="good"?"#15803D":it.status==="ok"?"#CA8A04":"#DC2626";const ic=it.status==="good"?"▲":it.status==="ok"?"●":"▼";return(<div key={i} style={{display:"flex",gap:5,alignItems:"flex-start"}}><span style={{fontSize:10,color:cl,fontWeight:700,flexShrink:0,marginTop:1}}>{ic}</span><span style={{fontSize:11,color:"#374151"}}>{it.label}</span></div>)})}</div>)}
+
+
+// ── Scenario helpers ─────────────────────────────────────────────────────────
+const TM={leading:{l:"Leading",c:"#15803D",b:"#F0FDF4",br:"#BBF7D0",d:"#22C55E"},progressing:{l:"Progressing",c:"#B45309",b:"#FFFBEB",br:"#FDE68A",d:"#F59E0B"},attention:{l:"Needs Attention",c:"#B91C1C",b:"#FFF1F2",br:"#FECACA",d:"#EF4444"}};
+
+const SCENARIO_QUESTIONS = {
+  product: {
+    label: "AI Product Strategy",
+    questions: [
+      {
+        id: "product_launch",
+        text: "Has your company shipped an AI-powered product or feature to customers?",
+        options: [
+          { value: "none",     label: "No — nothing shipped yet" },
+          { value: "basic",    label: "Yes — basic features (e.g. search, content gen, copilot)" },
+          { value: "advanced", label: "Yes — advanced features (e.g. agents, workflow automation, voice)" },
+        ]
+      },
+      {
+        id: "product_rev",
+        text: "What share of your 2026 new bookings or revenue do you expect AI features to drive?",
+        options: [
+          { value: "none",  label: "Not sure / not tracking" },
+          { value: "low",   label: "0 – 5%" },
+          { value: "high",  label: "6% or more" },
+        ]
+      },
+      {
+        id: "product_rd",
+        text: "Roughly what share of your R&D effort is focused on AI?",
+        options: [
+          { value: "none",  label: "Near zero / not sure" },
+          { value: "low",   label: "1 – 10%" },
+          { value: "high",  label: "More than 10%" },
+        ]
+      },
+    ]
+  },
+  devprod: {
+    label: "Dev Productivity",
+    questions: [
+      {
+        id: "dev_use",
+        text: "Are your engineers actively using AI tools for writing or reviewing code?",
+        options: [
+          { value: "no",  label: "No" },
+          { value: "yes", label: "Yes" },
+        ]
+      },
+      {
+        id: "dev_tools",
+        text: "Which AI coding tools are your engineers using? (select the best description)",
+        options: [
+          { value: "none",  label: "None / not sure" },
+          { value: "one",   label: "One specific tool (e.g. Claude, Cursor, Copilot, ChatGPT)" },
+          { value: "multi", label: "Two or more specific tools" },
+        ]
+      },
+      {
+        id: "dev_impact",
+        text: "How much productivity improvement have you measured from AI in engineering?",
+        options: [
+          { value: "none",  label: "Not measured or no impact" },
+          { value: "low",   label: "Some improvement, less than 50%" },
+          { value: "high",  label: "50% or more improvement" },
+        ]
+      },
+    ]
+  },
+  datainfra: {
+    label: "Data Infrastructure",
+    questions: [
+      {
+        id: "data_breadth",
+        text: "How many of these data infrastructure areas has your team invested in? (data unification, semantic enrichment, data freshness, data quality, access controls)",
+        options: [
+          { value: "low",  label: "0 – 1 areas" },
+          { value: "mid",  label: "2 areas" },
+          { value: "high", label: "3 or more areas" },
+        ]
+      },
+      {
+        id: "data_access",
+        text: "How accessible is your core business data?",
+        options: [
+          { value: "manual", label: "Most data requires manual exports" },
+          { value: "mixed",  label: "Some data via APIs, some still manual" },
+          { value: "api",    label: "Most core data is accessible via APIs" },
+        ]
+      },
+      {
+        id: "data_api",
+        text: "Does your company have an API or MCP layer for programmatic data access?",
+        options: [
+          { value: "no",       label: "Not yet / on the roadmap" },
+          { value: "progress", label: "In progress or partially deployed" },
+          { value: "yes",      label: "Broadly deployed" },
+        ]
+      },
+    ]
+  },
+  gtm: {
+    label: "GTM",
+    questions: [
+      {
+        id: "gtm_tof",
+        text: "How many top-of-funnel areas is your team using AI in? (lead gen, content/campaigns, website chatbots, personalization, lead scoring, inbound capture)",
+        options: [
+          { value: "low",  label: "0 – 1 areas" },
+          { value: "mid",  label: "2 – 3 areas" },
+          { value: "high", label: "4 or more areas" },
+        ]
+      },
+      {
+        id: "gtm_mof",
+        text: "How many mid-funnel areas is your team using AI in? (call transcription, outbound/prospecting, calendar/scheduling, chatbots, demos, proposals, AI forecasting)",
+        options: [
+          { value: "low",  label: "0 – 1 areas" },
+          { value: "mid",  label: "2 – 4 areas" },
+          { value: "high", label: "5 or more areas" },
+        ]
+      },
+      {
+        id: "gtm_impact",
+        text: "Has AI driven a measurable improvement in a core GTM metric (e.g. pipeline, conversion, GTV)?",
+        options: [
+          { value: "no",   label: "No measurable impact yet" },
+          { value: "some", label: "Some improvement, less than 10%" },
+          { value: "yes",  label: "10% or more improvement" },
+        ]
+      },
+    ]
+  },
+  postsales: {
+    label: "Post-Sales",
+    questions: [
+      {
+        id: "ps_chatbot",
+        text: "Has your company deployed an AI chatbot or agent for customer support?",
+        options: [
+          { value: "no",  label: "No" },
+          { value: "yes", label: "Yes" },
+        ]
+      },
+      {
+        id: "ps_deflection",
+        text: "What share of support interactions does your AI handle without human escalation?",
+        options: [
+          { value: "na",   label: "Not deployed / not measuring" },
+          { value: "low",  label: "Less than 70%" },
+          { value: "high", label: "70% or more" },
+        ]
+      },
+      {
+        id: "ps_csat",
+        text: "Are you tracking customer satisfaction scores for AI-handled vs human-handled interactions?",
+        options: [
+          { value: "no",  label: "No" },
+          { value: "yes", label: "Yes" },
+        ]
+      },
+    ]
+  },
+  hiring: {
+    label: "Hiring & Talent",
+    questions: [
+      {
+        id: "hiring_roles",
+        text: "Has your company hired dedicated AI/ML roles (engineers, product managers, data scientists, etc.)?",
+        options: [
+          { value: "no",  label: "No dedicated AI/ML roles yet" },
+          { value: "yes", label: "Yes — at least one dedicated role" },
+        ]
+      },
+      {
+        id: "hiring_impact",
+        text: "Has AI allowed you to reduce or avoid hiring?",
+        options: [
+          { value: "no",     label: "No impact on hiring" },
+          { value: "some",   label: "Some impact, less than 11%" },
+          { value: "high",   label: "Reduced or avoided hiring by 11% or more" },
+        ]
+      },
+    ]
+  },
+  internal: {
+    label: "General Enablement",
+    questions: [
+      {
+        id: "int_adoption",
+        text: "What share of your employees use AI tools on a regular basis?",
+        options: [
+          { value: "low",  label: "Less than 26%" },
+          { value: "mid",  label: "26 – 75%" },
+          { value: "high", label: "76 – 100%" },
+        ]
+      },
+      {
+        id: "int_agents",
+        text: "Has your company deployed internal AI agents to automate workflows (e.g. support, HR, finance, sales ops)?",
+        options: [
+          { value: "no",  label: "No agents in production" },
+          { value: "yes", label: "Yes — real agents running in production" },
+        ]
+      },
+      {
+        id: "int_measure",
+        text: "How are you tracking AI's impact on the business?",
+        options: [
+          { value: "none",  label: "Not measuring yet" },
+          { value: "qual",  label: "Qualitative only (surveys, employee feedback)" },
+          { value: "quant", label: "Quantitative metrics (time savings, cost, code output, etc.)" },
+          { value: "both",  label: "Both quantitative and qualitative" },
+        ]
+      },
+      {
+        id: "int_savings",
+        text: "Have you realized measurable budget savings or cost avoidance from AI?",
+        options: [
+          { value: "none", label: "No savings yet" },
+          { value: "low",  label: "0 – 5% savings" },
+          { value: "high", label: "6% or more savings" },
+        ]
+      },
+      {
+        id: "int_license",
+        text: "Does your company have an org-wide license for at least one enterprise AI tool?",
+        options: [
+          { value: "no",  label: "No org-wide license" },
+          { value: "yes", label: "Yes" },
+        ]
+      },
+    ]
+  },
+};
+
+function scoreScenario(answers) {
+  // product
+  const pLaunch = answers.product_launch;
+  const pRev    = answers.product_rev;
+  const pRD     = answers.product_rd;
+  const pC1 = pLaunch === "advanced";
+  const pC2 = pRev    === "high";
+  const pC3 = pRD     === "high";
+  const pN  = [pC1,pC2,pC3].filter(Boolean).length;
+  const product = pN===3?"Leading":pN===2?"Progressing":"Needs Attention";
+
+  // devprod
+  const dUse    = answers.dev_use;
+  const dTools  = answers.dev_tools;
+  const dImpact = answers.dev_impact;
+  const dC1 = dUse    === "yes";
+  const dC2 = dTools  === "multi";
+  const dC3 = dImpact === "high";
+  const dN  = [dC1,dC2,dC3].filter(Boolean).length;
+  const devprod = dN===3?"Leading":dN===2?"Progressing":"Needs Attention";
+
+  // datainfra
+  const diBreadth = answers.data_breadth;
+  const diAccess  = answers.data_access;
+  const diApi     = answers.data_api;
+  const diC1 = diBreadth === "high";
+  const diC2 = diAccess  === "api";
+  const diC3 = diApi     === "yes";
+  const diN  = [diC1,diC2,diC3].filter(Boolean).length;
+  const datainfra = diN===3?"Leading":diN===2?"Progressing":"Needs Attention";
+
+  // gtm
+  const gTof    = answers.gtm_tof;
+  const gMof    = answers.gtm_mof;
+  const gImpact = answers.gtm_impact;
+  const gC1 = gTof    === "high";
+  const gC2 = gMof    === "high";
+  const gC3 = gImpact === "yes";
+  const gN  = [gC1,gC2,gC3].filter(Boolean).length;
+  const gtm = gN===3?"Leading":gN===2?"Progressing":"Needs Attention";
+
+  // postsales
+  const psChatbot    = answers.ps_chatbot;
+  const psDeflection = answers.ps_deflection;
+  const psCsat       = answers.ps_csat;
+  const psC1 = psChatbot    === "yes";
+  const psC2 = psDeflection === "high";
+  const psC3 = psCsat       === "yes";
+  const psN  = [psC1,psC2,psC3].filter(Boolean).length;
+  const postsales = psN===3?"Leading":psN===2?"Progressing":"Needs Attention";
+
+  // hiring
+  const hRoles  = answers.hiring_roles;
+  const hImpact = answers.hiring_impact;
+  const hC1 = hRoles  === "yes";
+  const hC2 = hImpact === "high";
+  const hN  = [hC1,hC2].filter(Boolean).length;
+  const hiring = hN===2?"Leading":hN===1?"Progressing":"Needs Attention";
+
+  // internal
+  const iAdopt   = answers.int_adoption;
+  const iAgents  = answers.int_agents;
+  const iMeasure = answers.int_measure;
+  const iSavings = answers.int_savings;
+  const iLicense = answers.int_license;
+  const iC1 = iAdopt   === "high";
+  const iC2 = iAgents  === "yes";
+  const iC3 = iMeasure === "both";
+  const iC4 = iSavings === "high";
+  const iC5 = iLicense === "yes";
+  const iN  = [iC1,iC2,iC3,iC4,iC5].filter(Boolean).length;
+  const internal = iN===5?"Leading":iN>=3?"Progressing":"Needs Attention";
+
+  const secMap = {product,devprod,datainfra,gtm,postsales,hiring,internal};
+  const scores = SECS.map(s=>({...s,tier:secMap[s.k],na:false}));
+  const valid = scores.filter(s=>!s.na);
+  const leading    = valid.filter(s=>s.tier==="Leading").map(s=>s.l);
+  const developing = valid.filter(s=>s.tier==="Progressing").map(s=>s.l);
+  const attention  = valid.filter(s=>s.tier==="Needs Attention").map(s=>s.l);
+  const tier = getOverall(leading.length);
+  // Build synthetic raw fields so getItems() can render real detail bullets
+  const synth = {};
+  // internal
+  synth.empAI = answers.int_adoption==="high"?"76-100%":answers.int_adoption==="mid"?"51-75%":"0-25%";
+  synth.lClaude=1; synth.lGPT=0; synth.lGemini=0; synth.lOther=answers.int_license==="yes"?"Y":"";
+  synth.ag = answers.int_agents==="yes"?"Agents deployed in production (per scenario input)":"None currently";
+  synth.dt = answers.int_agents==="yes"?"claude code":""; // needed for hasRA
+  synth.meas = answers.int_measure||"none";
+  synth.sav = answers.int_savings==="high"?"6-10":answers.int_savings==="low"?"0-5":"0";
+  // hiring
+  synth.tal = answers.hiring_roles==="yes"?["AI/ML Engineers"]:[];
+  synth.hir = answers.hiring_impact==="high"?"reduced_11_25":answers.hiring_impact==="some"?"reduced_1_10":"no";
+  // gtm
+  const tofCount = answers.gtm_tof==="high"?4:answers.gtm_tof==="mid"?2:0;
+  const mofCount = answers.gtm_mof==="high"?5:answers.gtm_mof==="mid"?2:0;
+  synth.tof = Array(tofCount).fill("Lead Gen");
+  synth.mof = Array(mofCount).fill("Call Transcription");
+  synth.gt = answers.gtm_tof!==undefined?"AI tools in use (per scenario input)":"";
+  synth.gi = answers.gtm_impact==="yes"?"10%+ improvement in GTM metric":answers.gtm_impact==="some"?"Some improvement, below 10%":"No measurable impact yet";
+  // postsales
+  synth.cb = answers.ps_chatbot==="yes"?"Yes":"No";
+  synth.cbV = answers.ps_chatbot==="yes"?"AI chatbot deployed":"";
+  synth.cbD = answers.ps_deflection==="high"?"75":answers.ps_deflection==="low"?"40":"";
+  synth.csat = answers.ps_csat==="yes"?"Measuring AI vs human CSAT":"";
+  synth.ps = [];
+  // devprod
+  synth.eAI = answers.dev_use==="yes"?"Yes":"No";
+  synth.dm = answers.dev_impact!=="none"&&answers.dev_impact!==undefined?"Productivity metrics tracked (per scenario input)":"";
+  synth.di = answers.dev_impact==="high"?"50%+ productivity gain":answers.dev_impact==="low"?"0-49% productivity gain":"No impact documented";
+  // datainfra
+  const dinfCount = answers.data_breadth==="high"?3:answers.data_breadth==="mid"?2:0;
+  synth.dinf = Array(dinfCount).fill("Data Unification");
+  synth.da = answers.data_access==="api"?"api":answers.data_access==="mixed"?"mixed":"manual";
+  synth.api = answers.data_api==="yes"?"Yes, broadly deployed":answers.data_api==="progress"?"Yes, limited / in progress":"No, but it's on our roadmap";
+  // product
+  const ADV2=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];
+  synth.lnch = answers.product_launch!=="none"&&answers.product_launch!==undefined?"Yes":"No";
+  synth.pt = answers.product_launch==="advanced"?["Agents","Workflow Automation"]:answers.product_launch==="basic"?["Copilot/Assistant"]:[];
+  synth.rev = answers.product_rev==="high"?"6-15%":answers.product_rev==="low"?"0 - 5% of 2026 bookings/new revenue":"Not sure";
+  synth.rd = answers.product_rd==="high"?"20":answers.product_rd==="low"?"5":"0";
+  synth.pr = [];
+  synth.cs = "";
+  return {co:"Your Scenario",bm:"—",...synth,scores,leading,developing,attention,tier,isScenario:true};
+}
+
+// Pre-fill answers from a company's existing data
+function prefillFromCompany(c) {
+  if (!c) return {};
+  const answers = {};
+  // product
+  const ADV=["Agents","Document Intelligence","Workflow Automation","Recommendations","Analytics & Insights","Voice/Multimodal"];
+  const hasAdv = c.lnch==="Yes" && c.pt && c.pt.some(p=>ADV.includes(p));
+  answers.product_launch = hasAdv?"advanced":(c.lnch==="Yes"?"basic":"none");
+  answers.product_rev    = (c.rev&&["6-15","16-30","31-50","51"].some(x=>c.rev.includes(x)))?"high":(c.rev&&c.rev.includes("0 - 5"))?"low":"none";
+  const rd=parseRD(c.rd);
+  answers.product_rd     = rd>10?"high":rd>=1?"low":"none";
+  // devprod
+  answers.dev_use    = c.eAI==="Yes"?"yes":"no";
+  answers.dev_tools  = sDT(c.dt)>=2?"multi":sDT(c.dt)===1?"one":"none";
+  const di=parseDI(c.di);
+  answers.dev_impact = di>=3?"high":di>=1?"low":"none";
+  // datainfra
+  const dl=c.dinf?c.dinf.length:0;
+  answers.data_breadth = dl>=3?"high":dl===2?"mid":"low";
+  answers.data_access  = c.da==="api"?"api":c.da==="mixed"?"mixed":"manual";
+  answers.data_api     = c.api&&c.api.includes("broadly")?"yes":c.api&&(c.api.includes("limited")||c.api.includes("progress"))?"progress":"no";
+  // gtm
+  const tf=c.tof?c.tof.length:0;
+  const mf=c.mof?c.mof.length:0;
+  answers.gtm_tof    = tf>=4?"high":tf>=2?"mid":"low";
+  answers.gtm_mof    = mf>=5?"high":mf>=2?"mid":"low";
+  const gi=parseGI(c.gi);
+  answers.gtm_impact = gi>=10?"yes":gi>0?"some":"no";
+  // postsales
+  answers.ps_chatbot    = c.cb==="Yes"?"yes":"no";
+  const defl=parseDefl(c.cbD);
+  answers.ps_deflection = defl!==null&&defl>=70?"high":defl!==null?"low":"na";
+  answers.ps_csat       = pCSAT(c.csat)!==null?"yes":"no";
+  // hiring
+  answers.hiring_roles  = (c.tal&&c.tal.length>=1)?"yes":"no";
+  answers.hiring_impact = ["reduced_11_25","reduced_26_50"].includes(c.hir)?"high":["reduced_1_10","expect"].includes(c.hir)?"some":"no";
+  // internal
+  answers.int_adoption = c.empAI==="76-100%"?"high":["51-75%","26-50%"].includes(c.empAI)?"mid":"low";
+  answers.int_agents   = hasRA(c.ag,c)?"yes":"no";
+  answers.int_measure  = c.meas==="both"?"both":c.meas==="quant"?"quant":c.meas==="qual"?"qual":"none";
+  answers.int_savings  = ["6-10","11-15","16+"].includes(c.sav)?"high":c.sav==="0-5"?"low":"none";
+  answers.int_license  = (c.lClaude||c.lGPT||c.lGemini||c.lOther)?"yes":"no";
+  return answers;
+}
+
+function App(){
+const[view,setView]=useState("scenario");
+const[selCo,setSelCo]=useState(null);
+const[sec,setSec]=useState("overall");
+const[tf,setTf]=useState("All");
+const[myCo,setMyCo]=useState(null);
+const[scenarioAnswers,setScenarioAnswers]=useState({});
+const[scenarioSubmitted,setScenarioSubmitted]=useState(false);
+const[scenarioPrefilled,setScenarioPrefilled]=useState(false);
+
+const all=useMemo(()=>D.map(c=>{const sc=getScores(c);const v=sc.filter(s=>!s.na);const ld=v.filter(s=>s.tier==="Leading").map(s=>s.l);const dv=v.filter(s=>s.tier==="Progressing").map(s=>s.l);const at=v.filter(s=>s.tier==="Needs Attention").map(s=>s.l);return{...c,scores:sc,leading:ld,developing:dv,attention:at,tier:getOverall(ld.length)}}),[]);
+
+const filt=useMemo(()=>all.filter(c=>{if(tf!=="All"&&DT[c.co]!==tf)return false;return true}),[all,tf]);
+
+const scenarioEntry=useMemo(()=>scenarioSubmitted?scoreScenario(scenarioAnswers):null,[scenarioSubmitted,scenarioAnswers]);
+const scenarioModified=useMemo(()=>{
+  if(!scenarioSubmitted||!myCo||myCo==="__new__")return true;
+  const myCoData=all.find(c=>c.co===myCo);
+  if(!myCoData)return true;
+  const prefilled=prefillFromCompany(myCoData);
+  return Object.keys(prefilled).some(k=>scenarioAnswers[k]!==prefilled[k]);
+},[scenarioSubmitted,scenarioAnswers,myCo,all]);
+const selData=useMemo(()=>{if(!selCo)return null;if(selCo==="Your Scenario"&&scenarioEntry)return scenarioEntry;return all.find(c=>c.co===selCo)||null;},[selCo,all,scenarioEntry]);
+
+const disp=useMemo(()=>{
+  const base=sec==="overall"?filt:filt.map(c=>{const s=c.scores.find(s=>s.k===sec);if(!s||s.na)return null;return{...c,tier:s.tier==="Leading"?"leading":s.tier==="Needs Attention"?"attention":"progressing"}}).filter(Boolean);
+  if(!scenarioEntry||!scenarioModified)return base;
+  const se=sec==="overall"?scenarioEntry:{...scenarioEntry,tier:scenarioEntry.scores.find(s=>s.k===sec)?.tier==="Leading"?"leading":scenarioEntry.scores.find(s=>s.k===sec)?.tier==="Needs Attention"?"attention":"progressing"};
+  return[...base,se];
+},[filt,sec,scenarioEntry,scenarioModified]);
+
+const hdr=(
+<div style={{background:"#1B2B4B",padding:"0 32px",position:"sticky",top:0,zIndex:100}}>
+<div style={{display:"flex",alignItems:"center",justifyContent:"space-between",height:64,flexWrap:"wrap",gap:12}}>
+<div style={{display:"flex",alignItems:"center",gap:16}}>
+<div><div style={{fontSize:15,fontWeight:900,color:"#fff",letterSpacing:-0.5}}>SUSQUEHANNA</div><div style={{fontSize:8,fontWeight:600,color:"rgba(255,255,255,0.5)",letterSpacing:3}}>GROWTH EQUITY</div></div>
+<div style={{width:1,height:28,background:"rgba(255,255,255,0.2)"}}/>
+<div><div style={{fontSize:13,fontWeight:700,color:"#fff"}}>2026 AI Scorecard</div><div style={{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:1}}>{D.length} portfolio companies - Q1 2026</div></div>
+</div>
+<div style={{display:"flex",alignItems:"center",gap:8}}>
+<div style={{display:"flex",gap:2,background:"rgba(0,0,0,0.2)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,padding:3}}>
+{[["scenario","START HERE: Your Company Inputs"],["portfolio","Portfolio View"],["company","Company Drilldown"]].map(([k,l])=>(
+<button key={k} onClick={()=>{setView(k);setSelCo(null);}} style={{padding:"6px 14px",fontSize:12,fontWeight:view===k?700:500,borderRadius:7,border:"none",background:view===k?"linear-gradient(135deg,#1E40AF,#2563EB)":"transparent",color:view===k?"#fff":"rgba(255,255,255,0.5)",cursor:"pointer",boxShadow:view===k?"0 2px 8px rgba(37,99,235,0.4)":"none"}}>{l}</button>))}
+</div>
+</div></div>
+<div style={{background:"#152240",borderTop:"1px solid rgba(255,255,255,0.08)",padding:"14px 32px"}}>
+  <p style={{margin:"0 auto",fontSize:12.5,color:"rgba(255,255,255,0.7)",lineHeight:1.65,maxWidth:1400}}>
+    SGE sent a survey to portfolio company CEOs in March 2026 to gauge where companies are driving real impact from AI across their business functions. While that survey was not intentionally designed as a diagnostic, many leadership teams have expressed curiosity in what leading companies are doing across each area of the business and how they compare vs. the portfolio. This dashboard is intended to provide you with visibility to that, and help you to model scenarios for how to progress your company's performance. Reach out to <strong style={{color:"rgba(255,255,255,0.85)"}}>julia.geftman@sgep.com</strong> with any questions about how SGE Portfolio Value Creation can help advance your AI journey!
+  </p>
+</div>
+</div>);
+
+
+
+if(view==="company"&&selData){
+const team=DT[selData.co];const tc=team?TC[team]:null;const t=TM[selData.tier];
+return(<div style={{fontFamily:"system-ui,sans-serif",background:"#F0F2F7",color:"#111827",minHeight:"100vh"}}>
+{hdr}
+<div style={{padding:"24px 32px",maxWidth:1280,margin:"0 auto"}}>
+
+<button onClick={()=>{setSelCo(null);setView("portfolio")}} style={{display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",fontSize:12,fontWeight:600,border:"1px solid #E2E8F0",borderRadius:8,background:"#fff",color:"#64748B",cursor:"pointer",marginBottom:20}}>← Back to Portfolio</button>
+<div style={{background:"#fff",border:"1px solid #E2E8F0",borderRadius:12,padding:"24px 28px",marginBottom:20}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16,flexWrap:"wrap"}}>
+<div style={{flex:1,minWidth:300}}>
+<div style={{fontSize:28,fontWeight:900,color:"#0F172A",letterSpacing:-0.8,marginBottom:12}}>{selData.co}</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14}}>
+<span style={{fontSize:11,fontWeight:600,color:"#1D4ED8",background:"#EFF6FF",border:"1px solid #BFDBFE",padding:"4px 10px",borderRadius:14}}>{selData.bm}</span>
+
+
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+{selData.scores.filter(s=>!s.na).map(s=>{const tk=s.tier==="Leading"?"leading":s.tier==="Needs Attention"?"attention":"progressing";const m=TM[tk];return(<div key={s.k} style={{display:"flex",alignItems:"center",gap:5,background:m.b,border:"1px solid "+m.br,borderRadius:14,padding:"3px 10px"}}><span style={{width:6,height:6,borderRadius:"50%",background:m.d,flexShrink:0}}/><span style={{fontSize:11,fontWeight:600,color:m.c}}>{s.l}</span></div>)})}
+</div></div>
+<div style={{background:t.b,border:"1px solid "+t.br,borderRadius:10,padding:"10px 16px",textAlign:"right",minWidth:120}}>
+<div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end",marginBottom:2}}><span style={{width:8,height:8,borderRadius:"50%",background:t.d}}/><span style={{fontSize:13,fontWeight:800,color:t.c}}>{t.l}</span></div>
+<div style={{fontSize:10,color:t.c,opacity:0.8,fontWeight:600}}>Overall</div>
+</div></div></div>
+{(()=>{
+  const origData = selData.isScenario && myCo && myCo !== "__new__" ? all.find(c=>c.co===myCo) : null;
+  const showSideBySide = selData.isScenario && origData && scenarioModified;
+
+  const renderCard = (data, label) => SECS.map(s=>{
+    const sc=data.scores.find(x=>x.k===s.k);
+    if(!sc||sc.na)return null;
+    const tk=sc.tier==="Leading"?"leading":sc.tier==="Needs Attention"?"attention":"progressing";
+    const m=TM[tk];
+    const items=getItems(data,s.k);
+    return(<div key={s.k} style={{background:"#fff",border:"1px solid "+m.br,borderRadius:12,overflow:"hidden"}}>
+      <div style={{background:m.b,borderBottom:"1px solid "+m.br,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{width:8,height:8,borderRadius:"50%",background:m.d}}/><span style={{fontSize:12,fontWeight:800,color:"#0F172A",textTransform:"uppercase",letterSpacing:0.4}}>{s.l}</span></div>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          {label&&<span style={{fontSize:10,fontWeight:700,color:label==="Your Scenario"?"#7C3AED":"#0369A1",background:label==="Your Scenario"?"#FAF5FF":"#F0F9FF",border:"1px solid "+(label==="Your Scenario"?"#E9D5FF":"#BAE6FD"),padding:"2px 8px",borderRadius:8}}>{label}</span>}
+          <span style={{fontSize:11,fontWeight:700,color:m.c}}>{sc.tier}</span>
+        </div>
+      </div>
+      <div style={{padding:"14px 16px"}}>
+        {items.map((it,i)=>{const cl=it.status==="good"?"#15803D":it.status==="ok"?"#CA8A04":"#DC2626";const ic=it.status==="good"?"▲":it.status==="ok"?"●":"▼";return(<div key={i} style={{display:"flex",gap:6,alignItems:"flex-start",marginBottom:6}}><span style={{fontSize:10,color:cl,fontWeight:700,flexShrink:0,marginTop:2}}>{ic}</span><div><span style={{fontSize:12,color:it.status==="bad"?"#B91C1C":"#374151",lineHeight:1.5,fontStyle:it.status==="bad"?"italic":"normal"}}>{it.label}</span>{it.sub&&<div style={{fontSize:11,color:"#64748B",marginTop:2,marginLeft:2,lineHeight:1.5}}>{it.sub}</div>}</div></div>)})}
+      </div>
+    </div>);
+  });
+
+  if(showSideBySide){
+    return(<>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+        <div style={{display:"flex",alignItems:"center",gap:6,background:"#FAF5FF",border:"1px solid #E9D5FF",borderRadius:8,padding:"6px 12px"}}>
+          <span style={{width:8,height:8,borderRadius:"50%",background:"#7C3AED"}}/>
+          <span style={{fontSize:12,fontWeight:700,color:"#7C3AED"}}>Your Scenario</span>
+        </div>
+        <span style={{fontSize:12,color:"#94A3B8"}}>vs.</span>
+        <div style={{display:"flex",alignItems:"center",gap:6,background:"#F0F9FF",border:"1px solid #BAE6FD",borderRadius:8,padding:"6px 12px"}}>
+          <span style={{width:8,height:8,borderRadius:"50%",background:"#0369A1"}}/>
+          <span style={{fontSize:12,fontWeight:700,color:"#0369A1"}}>Original Survey ({myCo})</span>
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+        {SECS.map(s=>{
+          const scS=selData.scores.find(x=>x.k===s.k);
+          const scO=origData.scores.find(x=>x.k===s.k);
+          if(!scS||scS.na)return null;
+          const tkS=scS.tier==="Leading"?"leading":scS.tier==="Needs Attention"?"attention":"progressing";
+          const tkO=scO&&!scO.na?(scO.tier==="Leading"?"leading":scO.tier==="Needs Attention"?"attention":"progressing"):tkS;
+          const mS=TM[tkS]; const mO=TM[tkO];
+          const itemsS=getItems(selData,s.k);
+          const itemsO=scO&&!scO.na?getItems(origData,s.k):[];
+          return(<React.Fragment key={s.k}>
+            <div style={{background:"#fff",border:"1px solid "+mS.br,borderRadius:12,overflow:"hidden"}}>
+              <div style={{background:mS.b,borderBottom:"1px solid "+mS.br,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{width:8,height:8,borderRadius:"50%",background:mS.d}}/><span style={{fontSize:12,fontWeight:800,color:"#0F172A",textTransform:"uppercase",letterSpacing:0.4}}>{s.l}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:10,fontWeight:700,color:"#7C3AED",background:"#FAF5FF",border:"1px solid #E9D5FF",padding:"2px 8px",borderRadius:8}}>Your Scenario</span>
+                  <span style={{fontSize:11,fontWeight:700,color:mS.c}}>{scS.tier}</span>
+                </div>
+              </div>
+              <div style={{padding:"14px 16px"}}>{itemsS.map((it,i)=>{const cl=it.status==="good"?"#15803D":it.status==="ok"?"#CA8A04":"#DC2626";const ic=it.status==="good"?"▲":it.status==="ok"?"●":"▼";return(<div key={i} style={{display:"flex",gap:6,alignItems:"flex-start",marginBottom:6}}><span style={{fontSize:10,color:cl,fontWeight:700,flexShrink:0,marginTop:2}}>{ic}</span><div><span style={{fontSize:12,color:it.status==="bad"?"#B91C1C":"#374151",lineHeight:1.5,fontStyle:it.status==="bad"?"italic":"normal"}}>{it.label}</span>{it.sub&&<div style={{fontSize:11,color:"#64748B",marginTop:2,marginLeft:2,lineHeight:1.5}}>{it.sub}</div>}</div></div>)})}</div>
+            </div>
+            <div style={{background:"#fff",border:"1px solid "+mO.br,borderRadius:12,overflow:"hidden"}}>
+              <div style={{background:mO.b,borderBottom:"1px solid "+mO.br,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}><span style={{width:8,height:8,borderRadius:"50%",background:mO.d}}/><span style={{fontSize:12,fontWeight:800,color:"#0F172A",textTransform:"uppercase",letterSpacing:0.4}}>{s.l}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontSize:10,fontWeight:700,color:"#0369A1",background:"#F0F9FF",border:"1px solid #BAE6FD",padding:"2px 8px",borderRadius:8}}>Original Survey</span>
+                  <span style={{fontSize:11,fontWeight:700,color:mO.c}}>{scO?scO.tier:"—"}</span>
+                </div>
+              </div>
+              <div style={{padding:"14px 16px"}}>{itemsO.length>0?itemsO.map((it,i)=>{const cl=it.status==="good"?"#15803D":it.status==="ok"?"#CA8A04":"#DC2626";const ic=it.status==="good"?"▲":it.status==="ok"?"●":"▼";return(<div key={i} style={{display:"flex",gap:6,alignItems:"flex-start",marginBottom:6}}><span style={{fontSize:10,color:cl,fontWeight:700,flexShrink:0,marginTop:2}}>{ic}</span><div><span style={{fontSize:12,color:it.status==="bad"?"#B91C1C":"#374151",lineHeight:1.5,fontStyle:it.status==="bad"?"italic":"normal"}}>{it.label}</span>{it.sub&&<div style={{fontSize:11,color:"#64748B",marginTop:2,marginLeft:2,lineHeight:1.5}}>{it.sub}</div>}</div></div>)}):<div style={{fontSize:12,color:"#94A3B8",fontStyle:"italic"}}>No survey data available</div>}</div>
+            </div>
+          </React.Fragment>);
+        })}
+      </div>
+    </>);
+  }
+
+  return(<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(360px,1fr))",gap:14}}>
+    {selData.isScenario&&!scenarioModified&&myCo&&myCo!=="__new__"&&<div style={{gridColumn:"1/-1",display:"flex",alignItems:"center",gap:10,background:"#FFFBEB",border:"1px solid #FDE68A",borderRadius:10,padding:"10px 16px",marginBottom:2}}><span style={{fontSize:14}}>ℹ️</span><span style={{fontSize:12,color:"#92400E"}}><strong>Your Scenario</strong> reflects your survey responses unchanged. Update any inputs on the <strong>Start Here</strong> tab to model changes and compare against your original survey data.</span></div>}
+    {renderCard(selData, null)}
+  </div>);
+})()}
+
+</div></div>)}
+
+return(<div style={{fontFamily:"system-ui,sans-serif",background:"#F0F2F7",color:"#111827",minHeight:"100vh"}}>
+{hdr}
+<div style={{padding:"24px 32px",maxWidth:1280,margin:"0 auto"}}>
+
+{view==="company"&&(()=>{
+  // Auto-load: prefer modified scenario, then myCo survey, else prompt
+  const autoTarget = (scenarioEntry && scenarioModified) ? "Your Scenario" : (myCo && myCo !== "__new__") ? myCo : null;
+  if(!autoTarget){
+    return(<div style={{textAlign:"center",padding:"80px 32px",color:"#94A3B8"}}>
+      <div style={{fontSize:48,marginBottom:16}}>🔍</div>
+      <div style={{fontSize:18,fontWeight:700,marginBottom:10,color:"#CBD5E1"}}>No company selected yet</div>
+      <div style={{fontSize:13,lineHeight:1.7,maxWidth:420,margin:"0 auto"}}>Input your company number on the <strong style={{color:"#CBD5E1"}}>Scenario Modeling</strong> tab to see a detailed overview of your company.</div>
+      <button onClick={()=>setView("scenario")} style={{marginTop:24,padding:"10px 20px",fontSize:13,fontWeight:600,background:"linear-gradient(135deg,#1E40AF,#2563EB)",color:"#fff",border:"none",borderRadius:8,cursor:"pointer",boxShadow:"0 2px 8px rgba(37,99,235,0.35)"}}>Go to Scenario Modeling →</button>
+    </div>);
+  }
+  // Auto-set selCo to the right target if not already set
+  if(selCo !== autoTarget){
+    setTimeout(()=>setSelCo(autoTarget),0);
+    return null;
+  }
+  return null;
+})()}
+{view==="portfolio"&&(<>
+<div style={{background:"#fff",border:"1px solid #BFDBFE",borderRadius:12,padding:"14px 20px",marginBottom:20,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+<div style={{display:"flex",flexDirection:"column",gap:2}}>
+<span style={{fontSize:11,fontWeight:800,color:"#1D4ED8",textTransform:"uppercase",letterSpacing:0.8}}>Your Company</span>
+<span style={{fontSize:11,color:"#64748B"}}>Select your company to see how you compare</span>
+</div>
+<select value={myCo||""} onChange={e=>{const v=e.target.value||null;if(!v){setMyCo(null);setScenarioSubmitted(false);setScenarioAnswers({});setScenarioPrefilled(false);}else{setMyCo(v);setScenarioSubmitted(false);setScenarioPrefilled(false);const cd=all.find(c=>c.co===v);if(cd){setScenarioAnswers(prefillFromCompany(cd));setScenarioPrefilled(true);}else{setScenarioAnswers({});}}setSelCo(null);}} style={{padding:"8px 14px",fontSize:13,fontWeight:600,background:myCo?"#EFF6FF":"#fff",border:"1px solid "+(myCo?"#2563EB":"#D1D9E6"),borderRadius:8,color:myCo?"#1D4ED8":"#64748B",outline:"none",cursor:"pointer",minWidth:180}}>
+<option value="">-- Select your company --</option>
+{[...D].sort((a,b)=>parseInt(a.co.split(" ")[1])-parseInt(b.co.split(" ")[1])).map(c=>(<option key={c.co} value={c.co}>{c.co}</option>))}
+</select>
+{myCo&&<button onClick={()=>{setMyCo(null);setScenarioSubmitted(false);setScenarioAnswers({});setScenarioPrefilled(false);setSelCo(null);}} style={{fontSize:11,color:"#64748B",background:"none",border:"1px solid #E2E8F0",borderRadius:6,padding:"6px 10px",cursor:"pointer"}}>Clear</button>}
+
+</div>
+<div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:20,background:"#E8EBF2",border:"1px solid #D1D9E6",borderRadius:12,padding:4}}>
+<button onClick={()=>setSec("overall")} style={{padding:"7px 16px",fontSize:11,fontWeight:sec==="overall"?700:500,borderRadius:8,border:"none",background:sec==="overall"?"#fff":"transparent",color:sec==="overall"?"#0F172A":"#64748B",cursor:"pointer",boxShadow:sec==="overall"?"0 1px 3px rgba(0,0,0,0.08)":"none"}}>Overall</button>
+{SECS.map(s=>(<button key={s.k} onClick={()=>setSec(s.k)} style={{padding:"7px 16px",fontSize:11,fontWeight:sec===s.k?700:500,borderRadius:8,border:"none",background:sec===s.k?"#fff":"transparent",color:sec===s.k?"#0F172A":"#64748B",cursor:"pointer",boxShadow:sec===s.k?"0 1px 3px rgba(0,0,0,0.08)":"none"}}>{s.l}</button>))}
+</div>
+{sec!=="overall"&&(()=>{const RUBRICS2={product:{title:"AI Product Strategy",rows:[{criteria:"1. Product launch & type",leading:"Launched with advanced type (e.g., agents, workflow automation, voice, etc.)",progressing:"Launched but basic types only (e.g., copilot, search, content gen, personalization)",attention:"No AI product launched"},{criteria:"2. Expected AI revenue",leading:"6%+ of 2026 bookings",progressing:"0–5% of 2026 bookings",attention:"Not sure or blank"},{criteria:"3. R&D focused on AI",leading:">10% of R&D",progressing:"1–10% of R&D",attention:"Zero, blank, or not sure"}]},devprod:{title:"Dev Productivity",rows:[{criteria:"1. Engineering uses AI for code gen",leading:"Yes",progressing:"—",attention:"No"},{criteria:"2. Primary AI dev tools",leading:"Lists 2+ specific tools with at least one qualifying",progressing:"Lists 1 specific tool (Claude/Anthropic, ChatGPT, Codex, or Cursor)",attention:"Blank, N/A, don't know, or irrelevant tool"},{criteria:"3. Productivity impact tracked and achieved",leading:"Lists specific metrics and 50%+ productivity gain",progressing:"Lists specific metrics and 0–49% productivity gain",attention:"Metrics not tracked or no impact documented"}]},datainfra:{title:"Data Infrastructure",rows:[{criteria:"1. Areas of infrastructure investment (5 areas – Data unification, semantic enrichment, data freshness, data quality, access controls and compliance)",leading:"3+ areas",progressing:"2 areas",attention:"0–1 areas"},{criteria:"2. Core data accessibility",leading:"Most data API-accessible",progressing:"Some APIs but significant data locked",attention:"Manual exports, not sure, or blank"},{criteria:"3. Programmatic interfaces / MCP",leading:"Broadly deployed",progressing:"Limited or in progress",attention:"On roadmap, not planned, or blank"}]},gtm:{title:"GTM",rows:[{criteria:"1. Top-of-funnel AI active (6 areas)",leading:"Using AI in 4+ areas",progressing:"Using AI in 2–3 areas",attention:"Using AI in 0–1 areas"},{criteria:"2. Mid-funnel AI active (7 areas)",leading:"Using AI in 5+ areas",progressing:"Using AI in 2–4 areas",attention:"Using AI in 0–1 areas"},{criteria:"3. GTM impact ≥10%",leading:"≥10% improvement in a named GTM metric",progressing:"Impact reported but < 10% or unquantified",attention:"No measurable impact"}]},postsales:{title:"Post-Sales",rows:[{criteria:"1. AI chatbot deployed",leading:"Yes",progressing:"—",attention:"No"},{criteria:"2. Deflection rate",leading:"Measuring & has ≥70% deflection rate",progressing:"Measuring & has 0–69% deflection rate",attention:"Not measuring, blank, N/A, or not applicable"},{criteria:"3. AI vs. human CSAT",leading:"Measuring AI CSAT",progressing:"—",attention:"Not measuring, blank, N/A, or not applicable"}]},hiring:{title:"Hiring & Talent",rows:[{criteria:"1. Dedicated AI/ML roles hired",leading:"At least 1 dedicated AI/ML role hired",progressing:"—",attention:"No dedicated role"},{criteria:"2. Hiring impact from AI",leading:"Reduced or avoided hiring by 11%+",progressing:"Some impact, < 11%",attention:"No impact or not tracked"}]},internal:{title:"General Enablement",rows:[{criteria:"1. % of employees using AI daily",leading:"76–100%",progressing:"26–75%",attention:"< 26%"},{criteria:"2. Internal AI agents actively deployed",leading:"Real agents running in production",progressing:"—",attention:"None in production"},{criteria:"3. Tracking AI impact",leading:"Both quantitative + qualitative",progressing:"Qualitative only",attention:"Not tracking"},{criteria:"4. Budget savings from AI",leading:"6%+ baked into 2026 plan",progressing:"Planned but < 6%",attention:"Not planned"},{criteria:"5. Licensed enterprise AI tool",leading:"At least one org-wide license",progressing:"—",attention:"No org-wide license"}]}};const rb2=RUBRICS2[sec];if(!rb2)return null;return(<div style={{background:"#fff",border:"1px solid #E2E8F0",borderRadius:12,overflow:"hidden",marginBottom:20}}><div style={{padding:"12px 16px",borderBottom:"1px solid #E2E8F0",background:"#F8FAFC"}}><span style={{fontSize:12,fontWeight:800,color:"#0F172A",textTransform:"uppercase",letterSpacing:0.6}}>Scoring Rubric — {rb2.title}</span></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"2px solid #E2E8F0"}}><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:"#64748B",textAlign:"left",width:"22%"}}>Criteria</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.leading.c,textAlign:"left",width:"26%"}}>Leading</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.progressing.c,textAlign:"left",width:"26%"}}>Progressing</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.attention.c,textAlign:"left",width:"26%"}}>Needs Attention</th></tr></thead><tbody>{rb2.rows.map((row,i)=>(<tr key={i} style={{borderBottom:"1px solid #F1F5F9",background:i%2===0?"#fff":"#F8FAFC"}}><td style={{padding:"8px 14px",fontSize:11,fontWeight:600,color:"#0F172A"}}>{row.criteria}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.leading}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.progressing}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.attention}</td></tr>))}</tbody></table></div>)})()}
+<div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
+{["leading","progressing","attention"].map(k=>{const t=TM[k];const secDescs={overall:{leading:"Leading in 4+ sections",progressing:"Leading in 2-3 sections",attention:"Leading in 0-1 sections"},internal:{leading:"Leading in all 5 criteria",progressing:"Leading in 3-4 criteria",attention:"Leading in 0-2 criteria"},hiring:{leading:"Leading in both criteria",progressing:"Dedicated role hired OR some hiring impact from AI, but below 11% threshold",attention:"No dedicated AI/ML role hired and no measurable hiring impact from AI"},gtm:{leading:"Leading in all 3 criteria",progressing:"Leading in 2 criteria",attention:"Leading in 0-1 criteria"},postsales:{leading:"Leading in all 3 criteria",progressing:"Leading in 2 criteria",attention:"Leading in 0-1 criteria"},devprod:{leading:"Leading in all 3 criteria",progressing:"Leading in 2 criteria",attention:"Leading in 0-1 criteria"},datainfra:{leading:"Leading in all 3 criteria",progressing:"Leading in 2 criteria",attention:"Leading in 0-1 criteria"},product:{leading:"Leading in all 3 criteria",progressing:"Leading in 2 criteria",attention:"Leading in 0-1 criteria"}};const descs={leading:(secDescs[sec]||secDescs.overall).leading,progressing:(secDescs[sec]||secDescs.overall).progressing,attention:(secDescs[sec]||secDescs.overall).attention};return(<div key={k} style={{background:t.b,border:"1px solid "+t.br,borderRadius:10,padding:"10px 14px",display:"flex",gap:10,alignItems:"flex-start"}}><span style={{width:10,height:10,borderRadius:"50%",background:t.d,flexShrink:0,marginTop:3}}/><div><div style={{fontSize:12,fontWeight:800,color:t.c,marginBottom:2}}>{t.l}</div><div style={{fontSize:11,color:t.c,opacity:0.8,lineHeight:1.4}}>{descs[k]}</div></div></div>)})}
+</div>
+{sec!=="overall"&&false&&(()=>{const RUBRICS={product:{title:"AI Product Strategy",rows:[{criteria:"1. Product launch & type",leading:"Launched with advanced type (e.g., agents, workflow automation, voice, etc.)",progressing:"Launched but basic types only (e.g., copilot, search, content gen, personalization)",attention:"No AI product launched"},{criteria:"2. Expected AI revenue",leading:"6%+ of 2026 bookings",progressing:"0–5% of 2026 bookings",attention:"Not sure or blank"},{criteria:"3. R&D focused on AI",leading:">10% of R&D",progressing:"1–10% of R&D",attention:"Zero, blank, or not sure"}]},devprod:{title:"Dev Productivity",rows:[{criteria:"1. Engineering uses AI for code gen",leading:"Yes",progressing:"—",attention:"No"},{criteria:"2. Primary AI dev tools",leading:"Lists 2+ specific tools with at least one qualifying",progressing:"Lists 1 specific tool (Claude/Anthropic, ChatGPT, Codex, or Cursor)",attention:"Blank, N/A, don't know, or irrelevant tool"},{criteria:"3. Productivity impact tracked and achieved",leading:"Lists specific metrics and 50%+ productivity gain",progressing:"Lists specific metrics and 0–49% productivity gain",attention:"Metrics not tracked or no impact documented"}]},datainfra:{title:"Data Infrastructure",rows:[{criteria:"1. Data infrastructure areas covered",leading:"3+ of 5 areas",progressing:"2 of 5 areas",attention:"0–1 of 5 areas"},{criteria:"2. Core data accessibility",leading:"Core data accessible via APIs",progressing:"Mix of API and manual",attention:"Manual exports required"},{criteria:"3. API/MCP layer",leading:"API or MCP broadly deployed",progressing:"API or MCP in progress / limited",attention:"No API/MCP planned"}]},gtm:{title:"GTM",rows:[{criteria:"1. Top-of-funnel AI areas",leading:"AI in 4+ of 6 ToF areas",progressing:"AI in 2–3 ToF areas",attention:"AI in 0–1 ToF areas"},{criteria:"2. Mid-of-funnel AI areas",leading:"AI in 5+ of 7 MoF areas",progressing:"AI in 2–4 MoF areas",attention:"AI in 0–1 MoF areas"},{criteria:"3. Quantified GTM impact",leading:"10%+ quantified improvement attributed to AI",progressing:"Some impact noted but below 10% or unclear attribution",attention:"No quantified GTM impact"}]},postsales:{title:"Post-Sales",rows:[{criteria:"1. AI chatbot deployed",leading:"Yes",progressing:"—",attention:"No"},{criteria:"2. Deflection rate",leading:"70%+ deflection rate",progressing:"Below 70% deflection",attention:"Not measured"},{criteria:"3. CSAT tracked",leading:"AI CSAT measured",progressing:"—",attention:"Not measured"}]},hiring:{title:"Hiring & Talent",rows:[{criteria:"1. AI/ML talent hired",leading:"Has dedicated AI/ML roles",progressing:"Has dedicated AI/ML roles",attention:"No dedicated AI/ML roles"},{criteria:"2. Hiring impact from AI",leading:"Reduced hiring by 11%+",progressing:"Reduced hiring 1–10% or expecting impact",attention:"No hiring impact"}]},internal:{title:"General Enablement",rows:[{criteria:"1. Employee AI adoption",leading:"76–100% of employees using AI",progressing:"51–75% of employees using AI",attention:"0–50% of employees using AI"},{criteria:"2. Internal agents",leading:"Building internal AI agents",progressing:"—",attention:"No internal agents deployed"},{criteria:"3. Measurement",leading:"Tracking quant + qual impact",progressing:"Tracking quant or qual only, or building framework",attention:"Not measuring AI impact"},{criteria:"4. Cost savings",leading:"6%+ cost savings",progressing:"0–5% savings",attention:"No savings reported"},{criteria:"5. Licensed AI tools",leading:"Has licensed enterprise AI tool(s)",progressing:"—",attention:"No licensed enterprise AI tool"}]}};const rb=RUBRICS[sec];if(!rb)return null;return(<div style={{background:"#fff",border:"1px solid #E2E8F0",borderRadius:12,overflow:"hidden",marginBottom:20}}><div style={{padding:"12px 16px",borderBottom:"1px solid #E2E8F0",background:"#F8FAFC"}}><span style={{fontSize:12,fontWeight:800,color:"#0F172A",textTransform:"uppercase",letterSpacing:0.6}}>Scoring Rubric — {rb.title}</span></div><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr style={{borderBottom:"2px solid #E2E8F0"}}><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:"#64748B",textAlign:"left",width:"22%"}}>Criteria</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.leading.c,textAlign:"left",width:"26%"}}>Leading</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.progressing.c,textAlign:"left",width:"26%"}}>Progressing</th><th style={{padding:"8px 14px",fontSize:11,fontWeight:700,color:TM.attention.c,textAlign:"left",width:"26%"}}>Needs Attention</th></tr></thead><tbody>{rb.rows.map((row,i)=>(<tr key={i} style={{borderBottom:"1px solid #F1F5F9",background:i%2===0?"#fff":"#F8FAFC"}}><td style={{padding:"8px 14px",fontSize:11,fontWeight:600,color:"#0F172A"}}>{row.criteria}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.leading}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.progressing}</td><td style={{padding:"8px 14px",fontSize:11,color:"#374151",lineHeight:1.5}}>{row.attention}</td></tr>))}</tbody></table></div>)})()}
+<div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14}}>
+{["leading","progressing","attention"].map(k=>{const t=TM[k];const cos=disp.filter(c=>c.tier===k).sort((a,b)=>{if(a.isScenario)return -1;if(b.isScenario)return 1;if(myCo&&a.co===myCo)return -1;if(myCo&&b.co===myCo)return 1;return parseInt(a.co.split(" ")[1])-parseInt(b.co.split(" ")[1])});return(<div key={k} style={{background:"#fff",border:"1px solid "+t.br,borderRadius:12,overflow:"hidden"}}>
+<div style={{background:t.b,borderBottom:"1px solid "+t.br,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}><span style={{fontSize:12,fontWeight:800,color:t.c,letterSpacing:0.3}}>{t.l}</span><span style={{fontSize:11,color:t.c,opacity:0.7}}>{cos.length}</span></div>
+<div style={{maxHeight:600,overflowY:"auto"}}>
+{cos.length===0?<div style={{padding:16,fontSize:12,color:"#94A3B8",fontStyle:"italic"}}>None</div>:
+cos.map((c,i)=>{const isMe=(myCo&&c.co===myCo)||c.isScenario;const isScen=c.isScenario;return(<div key={c.co} onClick={()=>{setSelCo(c.co);setView("company")}} style={{padding:"12px 16px",borderBottom:i<cos.length-1?"1px solid #F1F5F9":"none",cursor:"pointer",background:isScen?"#FAF5FF":isMe?"#EFF6FF":"transparent",borderLeft:isScen?"3px solid #7C3AED":isMe?"3px solid #2563EB":"3px solid transparent"}} onMouseEnter={e=>{if(!isMe)e.currentTarget.style.background=t.b}} onMouseLeave={e=>{if(!isMe)e.currentTarget.style.background="transparent"}}>
+<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}>
+<span style={{fontSize:13,fontWeight:700,color:isScen?"#7C3AED":isMe?"#1D4ED8":"#0F172A"}}>{c.co}</span>{isScen&&<span style={{fontSize:10,fontWeight:800,color:"#fff",background:"#7C3AED",padding:"2px 7px",borderRadius:10,marginLeft:6,letterSpacing:0.3}}>YOUR SCENARIO</span>}{!isScen&&isMe&&<span style={{fontSize:10,fontWeight:800,color:"#fff",background:"#2563EB",padding:"2px 7px",borderRadius:10,marginLeft:6,letterSpacing:0.3}}>YOU</span>}
+
+
+</div>
+{sec==="overall"?(<div style={{display:"flex",flexDirection:"column",gap:3}}>
+{c.leading.length>0&&<div style={{display:"flex",gap:5,alignItems:"flex-start"}}><span style={{fontSize:10,color:"#15803D",fontWeight:700,flexShrink:0,marginTop:1}}>▲</span><span style={{fontSize:11,color:"#374151"}}>Leading: <span style={{color:"#15803D",fontWeight:600}}>{c.leading.join(", ")}</span></span></div>}
+{c.developing.length>0&&<div style={{display:"flex",gap:5,alignItems:"flex-start"}}><span style={{fontSize:10,color:"#CA8A04",fontWeight:700,flexShrink:0,marginTop:1}}>●</span><span style={{fontSize:11,color:"#374151"}}>Progressing: <span style={{color:"#CA8A04",fontWeight:600}}>{c.developing.join(", ")}</span></span></div>}
+{c.attention.length>0&&<div style={{display:"flex",gap:5,alignItems:"flex-start"}}><span style={{fontSize:10,color:"#DC2626",fontWeight:700,flexShrink:0,marginTop:1}}>▼</span><span style={{fontSize:11,color:"#374151"}}>Needs attention: <span style={{color:"#DC2626",fontWeight:600}}>{c.attention.join(", ")}</span></span></div>}
+</div>):(<SD c={c} sk={sec}/>)}
+</div>)})}
+</div></div>)})}
+</div></>)}
+
+{view==="scenario"&&(()=>{
+  const myCoData = myCo ? all.find(c=>c.co===myCo) : null;
+
+  // Auto-prefill when myCo is selected for the first time
+  const handleSetMyCo = (co) => {
+    if(co==="__new__"){
+      setMyCo("__new__");
+      setScenarioAnswers({});setScenarioPrefilled(false);setScenarioSubmitted(false);
+    } else if(co){
+      setMyCo(co);
+      const cd=all.find(c=>c.co===co);
+      if(cd){setScenarioAnswers(prefillFromCompany(cd));setScenarioPrefilled(true);}
+    } else {
+      setMyCo(null);
+      setScenarioAnswers({});setScenarioPrefilled(false);setScenarioSubmitted(false);
+    }
+  };
+
+  const setAnswer=(id,val)=>setScenarioAnswers(prev=>({...prev,[id]:val}));
+
+  const allAnswered=Object.values(SCENARIO_QUESTIONS).every(sec=>
+    sec.questions.every(q=>scenarioAnswers[q.id]!==undefined&&scenarioAnswers[q.id]!=="")
+  );
+
+  const SEC_COLORS={
+    "AI Product Strategy":{bg:"#FDF2F8",border:"#FBCFE8",head:"#BE185D"},
+    "Dev Productivity":{bg:"#ECFDF5",border:"#A7F3D0",head:"#047857"},
+    "Data Infrastructure":{bg:"#F0F9FF",border:"#BAE6FD",head:"#0369A1"},
+    "GTM":{bg:"#EFF6FF",border:"#BFDBFE",head:"#1D4ED8"},
+    "Post-Sales":{bg:"#FAF5FF",border:"#E9D5FF",head:"#7E22CE"},
+    "Hiring & Talent":{bg:"#FFFBEB",border:"#FDE68A",head:"#B45309"},
+    "General Enablement":{bg:"#F0FDF4",border:"#BBF7D0",head:"#15803D"},
+  };
+
+  return(
+  <div style={{padding:"24px 32px",maxWidth:1100,margin:"0 auto"}}>
+
+    {/* Company selector */}
+    <div style={{background:"#fff",border:"1px solid #BFDBFE",borderRadius:12,padding:"16px 20px",marginBottom:20,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+      <div>
+        <div style={{fontSize:11,fontWeight:800,color:"#1D4ED8",textTransform:"uppercase",letterSpacing:0.8,marginBottom:2}}>Your Company</div>
+        <div style={{fontSize:11,color:"#64748B"}}>Select your company to pre-fill your existing survey responses</div>
+      </div>
+      <select value={myCo||""} onChange={e=>handleSetMyCo(e.target.value||null)}
+        style={{padding:"8px 14px",fontSize:13,fontWeight:600,background:myCo?"#EFF6FF":"#fff",border:"1px solid "+(myCo?"#2563EB":"#D1D9E6"),borderRadius:8,color:myCo?"#1D4ED8":"#64748B",outline:"none",cursor:"pointer",minWidth:200}}>
+        <option value="">-- Select your company --</option>
+        <option value="__new__">Start From Scratch</option>
+        {[...D].sort((a,b)=>parseInt(a.co.split(" ")[1])-parseInt(b.co.split(" ")[1])).map(c=>(<option key={c.co} value={c.co}>{c.co}</option>))}
+      </select>
+      {myCo&&<button onClick={()=>handleSetMyCo(null)} style={{fontSize:11,color:"#64748B",background:"none",border:"1px solid #E2E8F0",borderRadius:6,padding:"6px 10px",cursor:"pointer"}}>Clear</button>}
+      {scenarioPrefilled&&myCo!=="__new__"&&<span style={{fontSize:11,color:"#047857",fontWeight:600,background:"#ECFDF5",border:"1px solid #A7F3D0",borderRadius:6,padding:"4px 10px"}}>✓ Pre-filled from your survey data — update anything that's changed</span>}
+    </div>
+
+    {/* Top submit button */}
+    <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:8}}>
+      <button
+        
+        onClick={()=>{setScenarioSubmitted(true);setView("portfolio");}}
+        style={{padding:"12px 28px",fontSize:14,fontWeight:700,borderRadius:8,border:"none",
+          background:"linear-gradient(135deg,#1E40AF,#2563EB)",
+          color:"#fff",cursor:"pointer",
+          boxShadow:"0 2px 8px rgba(37,99,235,0.35)"}}>
+        {scenarioSubmitted?"Update Scenario — See Results →":"See Where My Company Stands →"}
+      </button>
+      {scenarioSubmitted&&<span style={{fontSize:11,color:"#047857",fontWeight:600}}>✓ Your scenario is live in the Portfolio View</span>}
+    </div>
+
+    {/* Email submission button */}
+    <div style={{background:"#fff",border:"1px solid #E2E8F0",borderRadius:12,padding:"20px 24px",marginTop:24,marginBottom:24}}>
+      <div style={{marginBottom:12}}>
+        <div style={{fontSize:13,fontWeight:700,color:"#0F172A",marginBottom:4}}>Want SGE to update your company's underlying data?</div>
+        <div style={{fontSize:12,color:"#64748B",lineHeight:1.6}}>Click below to send your updated inputs to the Portfolio Value Creation team via email, and we'll update your company's data in the underlying database.</div>
+      </div>
+      <button onClick={()=>{
+        const co = myCo && myCo !== "__new__" ? myCo : "No company selected";
+        const divider = "─────────────────────────────────────";
+        const sectionLines = Object.entries(SCENARIO_QUESTIONS).map(([secKey, secDef]) => {
+          const qLines = secDef.questions.map(q => {
+            const ans = scenarioAnswers[q.id];
+            const opt = q.options.find(o => o.value === ans);
+            return "  • " + q.text + "\n    " + (opt ? opt.label : "Not answered");
+          }).join("\n\n");
+          return secDef.label.toUpperCase() + "\n" + divider + "\n" + qLines;
+        }).join("\n\n");
+        const subject = "SGE AI Scorecard — " + co + " Responses";
+        const body = [
+          "Hi Julia,",
+          "",
+          "Please find my updated AI Scorecard responses below.",
+          "",
+          "Company: " + co,
+          "Date: " + new Date().toLocaleDateString("en-US", {month:"long",day:"numeric",year:"numeric"}),
+          "",
+          "════════════════════════════════════",
+          "  2026 SGE AI SCORECARD RESPONSES",
+          "════════════════════════════════════",
+          "",
+          sectionLines,
+          "",
+          divider,
+          "Sent from the SGE 2026 AI Scorecard"
+        ].join("\n");
+        const mailto = "mailto:julia.geftman@sgep.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        window.open(mailto);
+      }} style={{
+        display:"inline-flex",alignItems:"center",gap:8,
+        padding:"10px 20px",fontSize:13,fontWeight:700,
+        background:"linear-gradient(135deg,#1E40AF,#2563EB)",
+        color:"#fff",border:"none",borderRadius:8,cursor:"pointer",
+        boxShadow:"0 2px 8px rgba(37,99,235,0.35)"
+      }}>
+        ✉ Send My Responses to SGE
+      </button>
+    </div>
+
+    {/* Questions */}
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(340px,1fr))",gap:14,marginBottom:20}}>
+    {Object.entries(SCENARIO_QUESTIONS).map(([secKey,secDef])=>{
+      const col=SEC_COLORS[secDef.label]||{bg:"#F8FAFC",border:"#E2E8F0",head:"#374151"};
+      return(
+      <div key={secKey} style={{background:"#fff",border:"1px solid "+col.border,borderRadius:12,overflow:"hidden"}}>
+        <div style={{background:col.bg,borderBottom:"1px solid "+col.border,padding:"10px 16px"}}>
+          <span style={{fontSize:12,fontWeight:800,color:col.head,textTransform:"uppercase",letterSpacing:0.4}}>{secDef.label}</span>
+        </div>
+        <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:16}}>
+        {secDef.questions.map(q=>{
+          const answered=scenarioAnswers[q.id]!==undefined;
+          return(
+          <div key={q.id}>
+            <div style={{fontSize:12,fontWeight:600,color:"#0F172A",marginBottom:8,lineHeight:1.4}}>{q.text}</div>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+            {q.options.map(opt=>{
+              const sel=scenarioAnswers[q.id]===opt.value;
+              return(
+              <label key={opt.value} style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer",padding:"7px 10px",borderRadius:7,border:"1px solid "+(sel?"#2563EB":"#E2E8F0"),background:sel?"#EFF6FF":"#fff",transition:"all 0.1s"}}>
+                <div style={{width:14,height:14,borderRadius:"50%",border:"2px solid "+(sel?"#2563EB":"#CBD5E1"),background:sel?"#2563EB":"transparent",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  {sel&&<div style={{width:5,height:5,borderRadius:"50%",background:"#fff"}}/>}
+                </div>
+                <input type="radio" name={q.id} value={opt.value} checked={sel} onChange={()=>setAnswer(q.id,opt.value)} style={{display:"none"}}/>
+                <span style={{fontSize:12,color:sel?"#1D4ED8":"#374151",fontWeight:sel?600:400,lineHeight:1.4}}>{opt.label}</span>
+              </label>
+              );
+            })}
+            </div>
+          </div>
+          );
+        })}
+        </div>
+      </div>
+      );
+    })}
+    </div>
+
+    {/* Submit */}
+    <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+      <button
+        
+        onClick={()=>{setScenarioSubmitted(true);setView("portfolio");}}
+        style={{padding:"12px 28px",fontSize:14,fontWeight:700,borderRadius:8,border:"none",
+          background:"linear-gradient(135deg,#1E40AF,#2563EB)",
+          color:"#fff",cursor:"pointer",
+          boxShadow:"0 2px 8px rgba(37,99,235,0.35)"}}>
+        {scenarioSubmitted?"Update Scenario — See Results →":"See Where My Company Stands →"}
+      </button>
+      
+      {scenarioSubmitted&&<span style={{fontSize:11,color:"#047857",fontWeight:600}}>✓ Your scenario is live in the Portfolio View</span>}
+    </div>
+
+    {/* Email submission button */}
+    <div style={{background:"#fff",border:"1px solid #E2E8F0",borderRadius:12,padding:"20px 24px",marginTop:24,marginBottom:24}}>
+      <div style={{marginBottom:12}}>
+        <div style={{fontSize:13,fontWeight:700,color:"#0F172A",marginBottom:4}}>Want SGE to update your company's underlying data?</div>
+        <div style={{fontSize:12,color:"#64748B",lineHeight:1.6}}>Click below to send your updated inputs to the Portfolio Value Creation team via email, and we'll update your company's data in the underlying database.</div>
+      </div>
+      <button onClick={()=>{
+        const co = myCo && myCo !== "__new__" ? myCo : "No company selected";
+        const divider = "─────────────────────────────────────";
+        const sectionLines = Object.entries(SCENARIO_QUESTIONS).map(([secKey, secDef]) => {
+          const qLines = secDef.questions.map(q => {
+            const ans = scenarioAnswers[q.id];
+            const opt = q.options.find(o => o.value === ans);
+            return "  • " + q.text + "\n    " + (opt ? opt.label : "Not answered");
+          }).join("\n\n");
+          return secDef.label.toUpperCase() + "\n" + divider + "\n" + qLines;
+        }).join("\n\n");
+        const subject = "SGE AI Scorecard — " + co + " Responses";
+        const body = [
+          "Hi Julia,",
+          "",
+          "Please find my updated AI Scorecard responses below.",
+          "",
+          "Company: " + co,
+          "Date: " + new Date().toLocaleDateString("en-US", {month:"long",day:"numeric",year:"numeric"}),
+          "",
+          "════════════════════════════════════",
+          "  2026 SGE AI SCORECARD RESPONSES",
+          "════════════════════════════════════",
+          "",
+          sectionLines,
+          "",
+          divider,
+          "Sent from the SGE 2026 AI Scorecard"
+        ].join("\n");
+        const mailto = "mailto:julia.geftman@sgep.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        window.open(mailto);
+      }} style={{
+        display:"inline-flex",alignItems:"center",gap:8,
+        padding:"10px 20px",fontSize:13,fontWeight:700,
+        background:"linear-gradient(135deg,#1E40AF,#2563EB)",
+        color:"#fff",border:"none",borderRadius:8,cursor:"pointer",
+        boxShadow:"0 2px 8px rgba(37,99,235,0.35)"
+      }}>
+        ✉ Send My Responses to SGE
+      </button>
+    </div>
+
+  </div>
+  );
+})()}
+
+
+</div></div>)}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
